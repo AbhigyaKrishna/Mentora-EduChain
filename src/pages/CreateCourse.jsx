@@ -103,15 +103,15 @@ const CreateCourse = () => {
       let cid;
       if (type === 'thumbnail') {
         cid = await ipfsService.uploadImage(file, (progress) => {
-          setUploadProgress(Math.round(progress));
+          setUploadProgress(prev => Math.min(prev + progress / 3, 100));
         });
       } else if (type === 'video') {
         cid = await ipfsService.uploadVideo(file, (progress) => {
-          setUploadProgress(Math.round(progress));
+          setUploadProgress(prev => Math.min(prev + progress / 3, 100));
         });
       } else if (type === 'material') {
         cid = await ipfsService.uploadFile(file, (progress) => {
-          setUploadProgress(Math.round(progress));
+          setUploadProgress(prev => Math.min(prev + progress / (3 * formData.modules.length), 100));
         });
       }
       return cid;
@@ -134,13 +134,10 @@ const CreateCourse = () => {
       }
 
       // Upload thumbnail
-      setUploadProgress(10);
       const thumbnailIpfsHash = await handleFileUpload(formData.thumbnail, 'thumbnail');
-      setUploadProgress(30);
 
       // Upload intro video
       const introVideoIpfsHash = await handleFileUpload(formData.introVideo, 'video');
-      setUploadProgress(50);
 
       // Upload modules and materials
       const moduleIpfsHashes = [];
@@ -163,7 +160,6 @@ const CreateCourse = () => {
         }
         materialIpfsHashes[i] = materialHashes;
       }
-      setUploadProgress(80);
 
       // Create course content metadata
       const courseContent = {
@@ -176,7 +172,6 @@ const CreateCourse = () => {
 
       // Upload course content to IPFS
       const contentIpfsHash = await ipfsService.uploadJSON(courseContent);
-      setUploadProgress(90);
 
       // Create course on blockchain
       const client = getClient();
@@ -236,7 +231,7 @@ const CreateCourse = () => {
 
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Price (ETH) <span className="text-red-500">*</span>
+                  Price (EDU) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -545,7 +540,7 @@ const CreateCourse = () => {
           </div>
 
           {/* Upload Progress */}
-          {loading && uploadProgress > 0 && (
+          {loading && (
             <div className="mt-4">
               <div className="flex justify-between mb-1">
                 <span className="text-sm">Upload Progress</span>
