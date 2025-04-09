@@ -45,8 +45,9 @@ const Navbar = () => {
     // { path: '/create-course', label: 'Create Course' },
     { path: '/roadmap', label: 'Learning Roadmap' },
     { path: '/assignments', label: 'Assignments' },
-    { path: '/about', label: 'About' },
-    { path: '/dashboard', label: 'Profile' },
+    { path: '/about', label: 'About' }, 
+    { path: '/profile', label: 'Profile' },
+    { path: '/dashboard', label: 'Dashboard' },
   ];
 
   return (
@@ -114,9 +115,10 @@ const Navbar = () => {
                     onClick={handleLogout}
                     className={`px-4 py-2 rounded-full ${
                       darkMode 
-                        ? 'bg-red-600 hover:bg-red-700' 
-                        : 'bg-red-500 hover:bg-red-600'
-                    } text-white transition-all duration-200`}
+                        ? 'bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800' 
+                        : 'bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700'
+                    } text-white transition-all duration-200 transform hover:scale-110 shadow-lg`}
+                    aria-label="Logout"
                   >
                     Logout
                   </button>
