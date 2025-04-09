@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaGraduationCap, FaCertificate,FaClock, FaRobot, FaArrowRight, FaPlay, FaChalkboardTeacher, FaUserGraduate, FaAward, FaCheck, FaTasks, FaRocket, FaBrain, FaLightbulb, FaUsers, FaGlobe, FaShieldAlt, FaStar } from 'react-icons/fa';
-import WalletConnect from '../components/WalletConnect';
 import Aurora from './Aurora';
 import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
+import { useOCAuth } from '@opencampus/ocid-connect-js';
+import LoginButton from '../components/LoginButton';
 
 import SpotlightCard from './SpotlightCard';
   
 const Home = () => {
-  const [connectedAccount, setConnectedAccount] = useState('');
+  const { isInitialized, authState } = useOCAuth();
   const { darkMode } = useTheme();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -76,6 +77,41 @@ const Home = () => {
       color: "from-emerald-500 to-emerald-600"
     }
   ];
+
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Loading authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (authState.error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="p-6 rounded-xl bg-white dark:bg-gray-800 shadow-lg max-w-md w-full">
+          <div className="flex items-center gap-3 mb-4">
+            <svg className="w-6 h-6 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Authentication Error</h2>
+          </div>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            {authState.error.message}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-[#000000]' : 'bg-gradient-to-b from-blue-50 via-white to-blue-50'}`}>
@@ -152,7 +188,7 @@ const Home = () => {
               className="flex flex-col sm:flex-row gap-4"
               variants={fadeIn}
             >
-              {!connectedAccount && <WalletConnect onConnect={setConnectedAccount} />}
+              {!authState.isAuthenticated && <LoginButton />}
               <Link
                 to="/courses"
                 className={`group relative px-8 py-4 rounded-xl overflow-hidden ${

@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaGraduationCap, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
-import WalletConnect from './WalletConnect';
 import { useTheme } from '../context/ThemeContext';
+import { useOCAuthState } from '../hooks/useOCAuthState';
+import LoginButton from './LoginButton';
 
-const Navbar = ({ account, onConnect }) => {
+const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { darkMode, toggleDarkMode } = useTheme();
+  const { isAuthenticated, isLoading, OCId, logout } = useOCAuthState();
 
   // Close mobile menu when changing routes
   useEffect(() => {
@@ -36,14 +38,11 @@ const Navbar = ({ account, onConnect }) => {
 
   const navLinks = [
     { path: '/courses', label: 'Courses' },
-    // { path: '/profile', label: 'Profile' },
     { path: '/create-course', label: 'Create Course' },
     { path: '/roadmap', label: 'Learning Roadmap' },
-    // { path: '/ai-assignment', label: 'AI Assignments' },
     { path: '/assignments', label: 'Assignments' },
     { path: '/about', label: 'About' },
     { path: '/dashboard', label: 'Profile' },
-    // { path: '/contact', label: 'Contact' }
   ];
 
   return (
@@ -92,22 +91,35 @@ const Navbar = ({ account, onConnect }) => {
               {darkMode ? <FaSun className="text-xl" /> : <FaMoon className="text-xl" />}
             </button>
 
-            {/* Wallet Connect */}
-            {!account ? (
-              <WalletConnect onConnect={onConnect} />
-            ) : (
-              <div
-                className={`px-4 py-2 rounded-full ${
-                  darkMode 
-                    ? 'bg-gray-800 hover:bg-gray-700' 
-                    : 'bg-blue-100 hover:bg-blue-200'
-                } flex items-center transform hover:scale-105 transition-all duration-200 cursor-pointer`}
-              >
-                <span className={`mr-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Connected:</span>
-                <span className={`font-mono truncate max-w-xs ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                  {account.slice(0, 6)}...{account.slice(-4)}
-                </span>
-              </div>
+            {/* Authentication */}
+            {!isLoading && (
+              isAuthenticated ? (
+                <div className="flex items-center space-x-4">
+                  <div className={`px-4 py-2 rounded-full ${
+                    darkMode 
+                      ? 'bg-gray-800 hover:bg-gray-700' 
+                      : 'bg-blue-100 hover:bg-blue-200'
+                  } flex items-center transform hover:scale-105 transition-all duration-200 cursor-pointer`}
+                  >
+                    <span className={`mr-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>OCId:</span>
+                    <span className={`font-mono truncate max-w-xs ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                      {OCId}
+                    </span>
+                  </div>
+                  <button
+                    onClick={logout}
+                    className={`px-4 py-2 rounded-full ${
+                      darkMode 
+                        ? 'bg-red-600 hover:bg-red-700' 
+                        : 'bg-red-500 hover:bg-red-600'
+                    } text-white transition-all duration-200`}
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <LoginButton />
+              )
             )}
 
             {/* Mobile Menu Button */}
