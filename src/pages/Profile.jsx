@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCertificate, FaBell, FaBars, FaGraduationCap, FaEthereum } from 'react-icons/fa';
-import { User, LogOut, Award, Settings, Wallet } from 'lucide-react';
+import { User, LogOut, Award, Settings, Wallet, ChevronDown, X } from 'lucide-react';
 import Aurora from './Aurora';
 import { Link } from 'react-router-dom';
 import Overview from '../components/Profile/OverView';
@@ -65,14 +65,48 @@ const badges = [
   { id: 5, name: "Blockchain Enthusiast", description: "Completed 10+ courses", icon: "FaCode", date: "Apr 05, 2024" },
 ];
 
+// Available wallet connectors
+const walletOptions = [
+  {
+    id: 'metamask',
+    name: 'MetaMask',
+    icon: '/metamask-logo.svg', // You'll need to add these images to your public folder
+    description: 'Connect to your MetaMask wallet',
+    color: '#E2761B'
+  },
+  {
+    id: 'rainbow',
+    name: 'Rainbow',
+    icon: '/rainbow-logo.svg',
+    description: 'Connect using Rainbow wallet',
+    color: '#036FC7'
+  },
+  {
+    id: 'walletconnect',
+    name: 'WalletConnect',
+    icon: '/walletconnect-logo.svg',
+    description: 'Scan with WalletConnect to connect',
+    color: '#3B99FC'
+  },
+  {
+    id: 'coinbase',
+    name: 'Coinbase Wallet',
+    icon: '/coinbase-logo.svg',
+    description: 'Connect to Coinbase Wallet',
+    color: '#0052FF'
+  }
+];
+
 function Profile() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
+  const [activeWallet, setActiveWallet] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState('');
-  
+  const [showWalletModal, setShowWalletModal] = useState(false);
+
   const [notifications, setNotifications] = useState([
     { id: 1, text: "New course recommendation available", isNew: true, time: "2 hours ago" },
     { id: 2, text: "You've earned a new badge: 'Streak Master'", isNew: true, time: "Yesterday" },
@@ -84,27 +118,28 @@ function Profile() {
     const { ethereum } = window;
     return Boolean(ethereum && ethereum.isMetaMask);
   };
-  
+
   // Check connection status on component mount
   useEffect(() => {
     const checkConnection = async () => {
       if (isMetaMaskInstalled()) {
         try {
-          const accounts = await window.ethereum.request({ 
-            method: 'eth_accounts' 
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts'
           });
-          
+
           if (accounts.length > 0) {
             setWalletAddress(accounts[0]);
+            setActiveWallet('metamask');
           }
         } catch (error) {
           console.error("Error checking MetaMask connection:", error);
         }
       }
     };
-    
+
     checkConnection();
-    
+
     // Listen for account changes
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
@@ -112,61 +147,104 @@ function Profile() {
           setWalletAddress(accounts[0]);
         } else {
           setWalletAddress('');
+          setActiveWallet(null);
         }
       });
     }
-    
+
     return () => {
       // Clean up listeners when component unmounts
       if (window.ethereum && window.ethereum.removeListener) {
-        window.ethereum.removeListener('accountsChanged', () => {});
+        window.ethereum.removeListener('accountsChanged', () => { });
       }
     };
   }, []);
 
-  const connectWallet = async () => {
-    if (!isMetaMaskInstalled()) {
-      setConnectionError('MetaMask is not installed. Please install MetaMask to continue.');
-      return;
-    }
-    
+  const connectWallet = async (walletType) => {
     setIsConnecting(true);
     setConnectionError('');
-    
+
     try {
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts'
-      });
-      
-      setWalletAddress(accounts[0]);
-      
-      // Add a notification about successful connection
-      setNotifications([
-        { 
-          id: Date.now(), 
-          text: `Wallet connected: ${accounts[0].substring(0, 6)}...${accounts[0].substring(accounts[0].length - 4)}`, 
-          isNew: true, 
-          time: "Just now" 
-        },
-        ...notifications
-      ]);
-      
+      let accounts = [];
+
+      switch (walletType) {
+        case 'metamask':
+          if (!isMetaMaskInstalled()) {
+            throw new Error('MetaMask is not installed. Please install MetaMask to continue.');
+          }
+          accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+          });
+          break;
+
+        case 'rainbow':
+          // In a real implementation, you would use the Rainbow SDK
+          // This is a simplified example
+          if (window.rainbow) {
+            accounts = await window.rainbow.connect();
+          } else {
+            throw new Error('Rainbow wallet not detected. Please install the Rainbow wallet extension.');
+          }
+          break;
+
+        case 'walletconnect':
+          // In a real implementation, you would use the WalletConnect SDK
+          // This is a simplified example
+          console.log('WalletConnect would open here');
+          // Simulate a connection for demo purposes
+          accounts = ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
+          break;
+
+        case 'coinbase':
+          // In a real implementation, you would use the Coinbase Wallet SDK
+          // This is a simplified example
+          if (window.coinbaseWalletSDK) {
+            accounts = await window.coinbaseWalletSDK.connect();
+          } else {
+            throw new Error('Coinbase Wallet not detected.');
+          }
+          break;
+
+        default:
+          throw new Error('Unknown wallet type');
+      }
+
+      if (accounts.length > 0) {
+        setWalletAddress(accounts[0]);
+        setActiveWallet(walletType);
+        setShowWalletModal(false);
+
+        // Add a notification about successful connection
+        const walletName = walletOptions.find(w => w.id === walletType)?.name || walletType;
+        setNotifications([
+          {
+            id: Date.now(),
+            text: `Connected to ${walletName}: ${accounts[0].substring(0, 6)}...${accounts[0].substring(accounts[0].length - 4)}`,
+            isNew: true,
+            time: "Just now"
+          },
+          ...notifications
+        ]);
+      }
     } catch (error) {
-      console.error("Error connecting to MetaMask:", error);
-      setConnectionError(error.message || 'Failed to connect to MetaMask');
+      console.error(`Error connecting to ${walletType}:`, error);
+      setConnectionError(error.message || `Failed to connect to ${walletType}`);
     } finally {
       setIsConnecting(false);
     }
   };
 
   const disconnectWallet = () => {
+    const walletName = walletOptions.find(w => w.id === activeWallet)?.name || activeWallet;
+
     setWalletAddress('');
-    // Note: MetaMask does not provide a direct disconnect method.
-    // This just clears the state in our app, but MetaMask will remember the connection.
+    setActiveWallet(null);
+
+    // Add a notification about disconnection
     setNotifications([
-      { 
+      {
         id: Date.now(),
-        text: "Wallet disconnected from application",
+        text: `Disconnected from ${walletName}`,
         isNew: true,
         time: "Just now"
       },
@@ -204,6 +282,80 @@ function Profile() {
           <FaBars />
         </button>
       </div>
+
+      {/* Wallet Selection Modal */}
+      <AnimatePresence>
+        {showWalletModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              onClick={() => setShowWalletModal(false)}
+            />
+
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed inset-0 z-50 flex items-center justify-center overflow-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-md max-h-[90vh] overflow-auto">
+                <div className="p-4 border-b border-gray-700 flex justify-between items-center">
+                  <h3 className="font-semibold text-lg">Connect Wallet</h3>
+                  <button
+                    onClick={() => setShowWalletModal(false)}
+                    className="p-2 rounded-full hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div className="p-4">
+                  <div className="mb-4 text-gray-400 text-sm">
+                    Connect with one of the available wallet providers or create a new wallet.
+                  </div>
+
+                  <div className="space-y-3">
+                    {walletOptions.map((wallet) => (
+                      <button
+                        key={wallet.id}
+                        onClick={() => connectWallet(wallet.id)}
+                        disabled={isConnecting}
+                        className="flex items-center gap-3 w-full p-3 rounded-lg border border-gray-700 hover:border-gray-600 hover:bg-gray-700/50 transition-all"
+                        style={{ boxShadow: `0 0 0 1px rgba(${parseInt(wallet.color.substring(1, 3), 16)}, ${parseInt(wallet.color.substring(3, 5), 16)}, ${parseInt(wallet.color.substring(5, 7), 16)}, 0.05)` }}
+                      >
+                        <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                          {/* Replace with actual wallet icon */}
+                          <FaEthereum className="text-xl" style={{ color: wallet.color }} />
+                        </div>
+                        <div className="flex-1 text-left">
+                          <div className="font-medium">{wallet.name}</div>
+                          <div className="text-xs text-gray-400">{wallet.description}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {connectionError && (
+                    <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                      {connectionError}
+                    </div>
+                  )}
+
+                  <div className="mt-4 text-center text-xs text-gray-500">
+                    By connecting a wallet, you agree to our Terms of Service and Privacy Policy
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Notifications Panel */}
       <AnimatePresence>
@@ -292,26 +444,21 @@ function Profile() {
                 </div>
                 <h2 className="text-lg font-bold">{userData.name}</h2>
                 <div className="text-sm text-gray-400">{userData.role}</div>
-                
-                {/* MetaMask Wallet Display/Connect for Mobile */}
+
+                {/* Wallet Display/Connect for Mobile */}
                 <div className="mt-3 w-full">
                   {!walletAddress ? (
                     <button
-                      onClick={connectWallet}
-                      disabled={isConnecting}
+                      onClick={() => setShowWalletModal(true)}
                       className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-medium transition-colors"
                     >
-                      {isConnecting ? 'Connecting...' : (
-                        <>
-                          <FaEthereum />
-                          <span>Connect MetaMask</span>
-                        </>
-                      )}
+                      <Wallet size={18} />
+                      <span>Connect Wallet</span>
                     </button>
                   ) : (
                     <div className="w-full">
                       <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white mb-2">
-                        <FaEthereum className="text-orange-400" />
+                        <FaEthereum className="text-blue-400" />
                         <span className="text-sm">{formatAddress(walletAddress)}</span>
                       </div>
                       <button
@@ -323,12 +470,6 @@ function Profile() {
                     </div>
                   )}
                 </div>
-                
-                {connectionError && (
-                  <div className="mt-2 text-xs text-red-400 text-center">
-                    {connectionError}
-                  </div>
-                )}
               </div>
 
               <nav className="space-y-1">
@@ -402,26 +543,25 @@ function Profile() {
                   <h2 className="text-xl font-bold">{userData.name}</h2>
                   <div className="text-gray-400 text-sm">{userData.role}</div>
                   <div className="text-gray-500 text-xs mt-1">Member since {userData.joined}</div>
-                  
-                  {/* MetaMask Connect Button */}
+
+                  {/* Wallet Connect Button */}
                   <div className="mt-4 w-full">
                     {!walletAddress ? (
                       <button
-                        onClick={connectWallet}
-                        disabled={isConnecting}
+                        onClick={() => setShowWalletModal(true)}
                         className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-medium transition-colors"
                       >
-                        {isConnecting ? 'Connecting...' : (
-                          <>
-                            <FaEthereum />
-                            <span>Connect MetaMask</span>
-                          </>
-                        )}
+                        <Wallet size={18} />
+                        <span>Connect Wallet</span>
                       </button>
                     ) : (
                       <div className="w-full">
                         <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white mb-2">
-                          <FaEthereum className="text-orange-400" />
+                          {activeWallet === 'metamask' && <FaEthereum className="text-orange-400" />}
+                          {activeWallet === 'rainbow' && <FaEthereum className="text-blue-400" />}
+                          {activeWallet === 'walletconnect' && <FaEthereum className="text-blue-500" />}
+                          {activeWallet === 'coinbase' && <FaEthereum className="text-blue-600" />}
+                          {!activeWallet && <FaEthereum className="text-gray-400" />}
                           <span className="text-sm">{formatAddress(walletAddress)}</span>
                         </div>
                         <button
@@ -433,12 +573,6 @@ function Profile() {
                       </div>
                     )}
                   </div>
-                  
-                  {connectionError && (
-                    <div className="mt-2 text-xs text-red-400 text-center">
-                      {connectionError}
-                    </div>
-                  )}
                 </div>
 
                 <div className="space-y-2 pt-4 border-t border-gray-700">
@@ -450,7 +584,7 @@ function Profile() {
                     <User className="w-5 h-5" />
                     <span>Overview</span>
                   </button>
-                  
+
                   <button
                     onClick={() => setActiveTab('certificates')}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
@@ -508,21 +642,19 @@ function Profile() {
                 <div className="block sm:hidden">
                   {!walletAddress ? (
                     <button
-                      onClick={connectWallet}
-                      disabled={isConnecting}
-                      className="flex items-center justify-center gap-2 py-2 px-4 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-medium transition-colors"
+                      onClick={() => setShowWalletModal(true)}
+                      className="flex items-center justify-center gap-2 py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors"
                     >
-                      <FaEthereum />
-                      <span>{isConnecting ? 'Connecting...' : 'Connect'}</span>
+                      <Wallet size={18} />
+                      <span>Connect</span>
                     </button>
                   ) : (
                     <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white">
-                      <FaEthereum className="text-orange-400" />
+                      <FaEthereum className="text-blue-400" />
                       <span className="text-sm">{formatAddress(walletAddress)}</span>
                     </div>
                   )}
                 </div>
-                
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
                   className="relative p-3 rounded-full bg-gray-800/70 backdrop-blur-sm text-white hover:bg-gray-700 transition-colors shadow-lg"
