@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAssignmentManager } from '../hooks/useAssignmentManager';
-import { FaPlus, FaSpinner } from 'react-icons/fa';
+import { FaPlus, FaSpinner, FaTrash, FaCheckCircle } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import ipfsService from '../utils/ipfsStorage';
 
 const CreateAssignment = () => {
   const { theme } = useTheme();
@@ -15,7 +17,7 @@ const CreateAssignment = () => {
     title: '',
     description: '',
     question: '',
-    evaluationCriteria: '',
+    evaluationCriteria: [''],
     metaPrompt: ''
   });
 
@@ -27,24 +29,56 @@ const CreateAssignment = () => {
     }));
   };
 
+  const handleCriteriaChange = (index, value) => {
+    const newCriteria = [...formData.evaluationCriteria];
+    newCriteria[index] = value;
+    setFormData(prev => ({
+      ...prev,
+      evaluationCriteria: newCriteria
+    }));
+  };
+
+  const addCriteriaBox = () => {
+    setFormData(prev => ({
+      ...prev,
+      evaluationCriteria: [...prev.evaluationCriteria, '']
+    }));
+  };
+
+  const removeCriteriaBox = (index) => {
+    if (formData.evaluationCriteria.length > 1) {
+      setFormData(prev => ({
+        ...prev,
+        evaluationCriteria: prev.evaluationCriteria.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
     try {
-      // Validate form data
-      if (!formData.title || !formData.description || !formData.question || !formData.evaluationCriteria || !formData.metaPrompt) {
-        throw new Error('Please fill in all required fields');
+      // Filter out empty criteria
+      const validCriteria = formData.evaluationCriteria.filter(criteria => criteria.trim() !== '');
+      
+      if (validCriteria.length === 0) {
+        throw new Error('At least one checkpoint is required');
       }
+
+      // Upload meta prompt to IPFS
+      const metaPromptHash = await ipfsService.uploadJSON({
+        prompt: formData.metaPrompt
+      });
 
       // Create assignment
       const result = await getClient().createAssignment(
         formData.title,
         formData.description,
         formData.question,
-        formData.evaluationCriteria,
-        formData.metaPrompt
+        validCriteria,
+        metaPromptHash
       );
 
       // Navigate to assignments page on success
@@ -58,7 +92,11 @@ const CreateAssignment = () => {
 
   return (
     <div className={`min-h-screen ${theme.background} ${theme.text.primary} py-12 px-4 sm:px-6 lg:px-8`}>
-      <div className="max-w-3xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-3xl mx-auto"
+      >
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Create New Assignment</h1>
           <p className={`${theme.text.secondary}`}>
@@ -134,18 +172,37 @@ const CreateAssignment = () => {
             {/* Evaluation Criteria */}
             <div>
               <label htmlFor="evaluationCriteria" className="block text-sm font-medium mb-1">
-                Evaluation Criteria <span className="text-red-500">*</span>
+                Checkpoints <span className="text-red-500">*</span>
               </label>
-              <textarea
-                id="evaluationCriteria"
-                name="evaluationCriteria"
-                value={formData.evaluationCriteria}
-                onChange={handleInputChange}
-                required
-                rows={4}
-                className={`w-full px-4 py-2 rounded-lg border ${theme.border} bg-gray-800 text-white`}
-                placeholder="Enter evaluation criteria"
-              />
+              <div className="space-y-3">
+                {formData.evaluationCriteria.map((criteria, index) => (
+                  <div key={index} className="flex gap-2">
+                    <textarea
+                      value={criteria}
+                      onChange={(e) => handleCriteriaChange(index, e.target.value)}
+                      placeholder={`Checkpoint ${index + 1}`}
+                      className={`flex-1 p-3 rounded-lg border ${theme.border} bg-gray-800 text-white`}
+                      rows={3}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeCriteriaBox(index)}
+                      className={`p-3 rounded-lg ${theme.border} text-white ${formData.evaluationCriteria.length > 1 ? 'bg-red-600 hover:bg-red-700 transition-colors duration-200' : 'hidden'}`}
+                      title="Remove checkpoint"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addCriteriaBox}
+                  className={`flex items-center justify-center w-full p-3 rounded-lg ${theme.border} text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200 shadow-md`}
+                >
+                  <FaCheckCircle className="mr-2" />
+                  Add New Checkpoint
+                </button>
+              </div>
             </div>
 
             {/* Meta Prompt */}
@@ -190,7 +247,7 @@ const CreateAssignment = () => {
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -4,8 +4,6 @@ import { WagmiProvider, createConfig, http } from 'wagmi';
 import { mainnet, sepolia, arbitrumSepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { injected } from 'wagmi/connectors';
-import { useMentoraContract } from './hooks/useMentoraContract';
-import { useAssignmentManager } from './hooks/useAssignmentManager';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import CourseDetails from './pages/CourseDetails';

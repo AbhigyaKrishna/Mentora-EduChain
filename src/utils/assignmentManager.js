@@ -19,13 +19,15 @@ class AssignmentManagerClient {
     this.defaultAccount = account;
   }
 
-  async createAssignment(title, description, question, evaluationCriteria, metaPrompt) {
+  async createAssignment(title, description, question, evaluationCriteria, metaPromptIpfsHash) {
+    const criteriaArray = Array.isArray(evaluationCriteria) ? evaluationCriteria : [evaluationCriteria];
+    
     const tx = this.contract.methods.createAssignment(
       title,
       description,
       question,
-      evaluationCriteria,
-      metaPrompt
+      criteriaArray,
+      metaPromptIpfsHash
     );
     
     return this._sendTransaction(tx);
@@ -37,15 +39,17 @@ class AssignmentManagerClient {
     description,
     question,
     evaluationCriteria,
-    metaPrompt
+    metaPromptIpfsHash
   ) {
+    const criteriaArray = Array.isArray(evaluationCriteria) ? evaluationCriteria : [evaluationCriteria];
+    
     const tx = this.contract.methods.updateAssignment(
       assignmentId,
       title,
       description,
       question,
-      evaluationCriteria,
-      metaPrompt
+      criteriaArray,
+      metaPromptIpfsHash
     );
     
     return this._sendTransaction(tx);
@@ -94,8 +98,8 @@ class AssignmentManagerClient {
     return await this.contract.methods.getAssignmentEvaluationCriteria(assignmentId).call();
   }
 
-  async getAssignmentMetaPrompt(assignmentId) {
-    return await this.contract.methods.getAssignmentMetaPrompt(assignmentId).call();
+  async getAssignmentMetaPromptIpfsHash(assignmentId) {
+    return await this.contract.methods.getAssignmentMetaPromptIpfsHash(assignmentId).call();
   }
 
   async _sendTransaction(tx, options = {}) {

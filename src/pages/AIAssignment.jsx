@@ -458,14 +458,24 @@ const AIAssignment = () => {
         setLoading(true);
         const client = getClient();
         const assignment = await client.getAssignment(parseInt(id));
+
+        // Fetch metaPrompt from IPFS
+        let metaPrompt = '';
+        if (assignment.metaPromptIpfsHash) {
+          const response = await fetch(`https://ipfs.io/ipfs/${assignment.metaPromptIpfsHash}`);
+          const data = await response.json();
+          metaPrompt = data.prompt;
+        }
+
         setSelectedAssignment({
           id,
-          checkpoints: assignment.evaluationCriteria.split('\n\n').map((check, index) => ({
+          checkpoints: assignment.evaluationCriteria.map((check, index) => ({
             id: index + 1,
-            title: check.split('\n')[0].replace(/Task \d+: /, ""),
+            title: check.split('\n')[0],
             description: check.split('\n').slice(1).join('\n'),
           })),
-          ...assignment
+          ...assignment,
+          metaPrompt
         });
       } catch (err) {
         console.error('Error fetching assignment:', err);
