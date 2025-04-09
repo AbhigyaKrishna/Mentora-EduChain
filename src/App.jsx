@@ -24,6 +24,9 @@ import ProjectRooms from './pages/ProjectRooms';
 import ProjectRoom from './pages/ProjectRoom';
 import { Toaster } from 'react-hot-toast';
 import { Navigate } from 'react-router-dom';
+import Rewards from './pages/Rewards';
+import Certificates from './pages/Certificates';
+import CoursePage from './pages/CoursePage';
 // OCConnect configuration
 const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',
@@ -110,8 +113,8 @@ function App() {
                   <Route path="/rooms" element={<ProjectRooms />} />
                   <Route path="/room/:roomId" element={<ProjectRoom />} />
                   <Route path="/" element={<Navigate to="/rooms" replace />} />
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="profile" element={<Profile />} />
+                  <Route path="profile" element={<Dashboard />} />
+                  <Route path="dashboard" element={<Profile />} />
                   <Route path="faq" element={<FAQ />} />
                   <Route path="create-course" element={<CreateCourse />} />
                   <Route path="about" element={<About />} />
@@ -119,6 +122,9 @@ function App() {
                   <Route path="assignments" element={<Assignments />} />
                   <Route path="create-assignment" element={<CreateAssignment />} />
                   <Route path="contact" element={<Contact />} />
+                  <Route path="rewards" element={<Rewards />} />
+                  <Route path="certificates" element={<Certificates />} />
+                  <Route path="course/:courseId" element={<CoursePage />} />
                   <Route path="*" element={<NotFound />} />
                   <Route
                     path="/redirect"
