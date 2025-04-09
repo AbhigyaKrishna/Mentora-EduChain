@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAssignmentManager } from '../hooks/useAssignmentManager';
+import { useOCAuthState } from '../hooks/useOCAuthState';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 import { FaPlus, FaSpinner, FaTrash, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import ipfsService from '../utils/ipfsStorage';
@@ -10,6 +12,8 @@ const CreateAssignment = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const { getClient, error: contractError } = useAssignmentManager();
+  const { ethAddress } = useOCAuthState();
+  const { isConnected, error: walletError, isLoading: isWalletLoading, connect } = useWalletConnection(ethAddress);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -60,6 +64,13 @@ const CreateAssignment = () => {
     setIsSubmitting(true);
 
     try {
+      if (!isConnected) {
+        await connect();
+        if (!isConnected) {
+          throw new Error('Please connect to MetaMask to continue');
+        }
+      }
+
       // Filter out empty criteria
       const validCriteria = formData.evaluationCriteria.filter(criteria => criteria.trim() !== '');
       
@@ -110,9 +121,28 @@ const CreateAssignment = () => {
           </div>
         )}
 
+        {walletError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            {walletError}
+          </div>
+        )}
+
         {contractError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
             {contractError}
+          </div>
+        )}
+
+        {!isConnected && (
+          <div className="mb-6 p-4 rounded-lg bg-yellow-100 border border-yellow-400 text-yellow-700">
+            <p className="mb-2">Please connect your MetaMask wallet to continue.</p>
+            <button
+              onClick={connect}
+              disabled={isWalletLoading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            >
+              {isWalletLoading ? 'Connecting...' : 'Connect MetaMask'}
+            </button>
           </div>
         )}
 
