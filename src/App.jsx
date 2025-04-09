@@ -27,6 +27,8 @@ import { Navigate } from 'react-router-dom';
 import Rewards from './pages/Rewards';
 import Certificates from './pages/Certificates';
 import CoursePage from './pages/CoursePage';
+
+
 // OCConnect configuration
 const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',

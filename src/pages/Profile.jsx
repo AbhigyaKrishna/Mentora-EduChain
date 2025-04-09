@@ -1,11 +1,8 @@
-// src/pages/Profile.jsx
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCertificate, FaBell, FaBars, FaGraduationCap } from 'react-icons/fa';
-import { User, LogOut, Award, Settings } from 'lucide-react';
+import { FaCertificate, FaBell, FaBars, FaGraduationCap, FaEthereum } from 'react-icons/fa';
+import { User, LogOut, Award, Settings, Wallet } from 'lucide-react';
 import Aurora from './Aurora';
-import { useTheme } from '../context/ThemeContext';
 import { Link } from 'react-router-dom';
 import Overview from '../components/Profile/OverView';
 import Certificates from '../components/Profile/Certificates';
@@ -72,13 +69,115 @@ function Profile() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [walletAddress, setWalletAddress] = useState('');
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState('');
+  
   const [notifications, setNotifications] = useState([
     { id: 1, text: "New course recommendation available", isNew: true, time: "2 hours ago" },
     { id: 2, text: "You've earned a new badge: 'Streak Master'", isNew: true, time: "Yesterday" },
     { id: 3, text: "Course 'Advanced Smart Contracts' has been updated", isNew: false, time: "2 days ago" },
   ]);
 
-  const { theme } = useTheme();
+  // Check if MetaMask is installed
+  const isMetaMaskInstalled = () => {
+    const { ethereum } = window;
+    return Boolean(ethereum && ethereum.isMetaMask);
+  };
+  
+  // Check connection status on component mount
+  useEffect(() => {
+    const checkConnection = async () => {
+      if (isMetaMaskInstalled()) {
+        try {
+          const accounts = await window.ethereum.request({ 
+            method: 'eth_accounts' 
+          });
+          
+          if (accounts.length > 0) {
+            setWalletAddress(accounts[0]);
+          }
+        } catch (error) {
+          console.error("Error checking MetaMask connection:", error);
+        }
+      }
+    };
+    
+    checkConnection();
+    
+    // Listen for account changes
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length > 0) {
+          setWalletAddress(accounts[0]);
+        } else {
+          setWalletAddress('');
+        }
+      });
+    }
+    
+    return () => {
+      // Clean up listeners when component unmounts
+      if (window.ethereum && window.ethereum.removeListener) {
+        window.ethereum.removeListener('accountsChanged', () => {});
+      }
+    };
+  }, []);
+
+  const connectWallet = async () => {
+    if (!isMetaMaskInstalled()) {
+      setConnectionError('MetaMask is not installed. Please install MetaMask to continue.');
+      return;
+    }
+    
+    setIsConnecting(true);
+    setConnectionError('');
+    
+    try {
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+      
+      setWalletAddress(accounts[0]);
+      
+      // Add a notification about successful connection
+      setNotifications([
+        { 
+          id: Date.now(), 
+          text: `Wallet connected: ${accounts[0].substring(0, 6)}...${accounts[0].substring(accounts[0].length - 4)}`, 
+          isNew: true, 
+          time: "Just now" 
+        },
+        ...notifications
+      ]);
+      
+    } catch (error) {
+      console.error("Error connecting to MetaMask:", error);
+      setConnectionError(error.message || 'Failed to connect to MetaMask');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnectWallet = () => {
+    setWalletAddress('');
+    // Note: MetaMask does not provide a direct disconnect method.
+    // This just clears the state in our app, but MetaMask will remember the connection.
+    setNotifications([
+      { 
+        id: Date.now(),
+        text: "Wallet disconnected from application",
+        isNew: true,
+        time: "Just now"
+      },
+      ...notifications
+    ]);
+  };
+
+  const formatAddress = (address) => {
+    if (!address) return '';
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  };
 
   const markAllAsRead = () => {
     setNotifications(notifications.map(n => ({ ...n, isNew: false })));
@@ -193,6 +292,43 @@ function Profile() {
                 </div>
                 <h2 className="text-lg font-bold">{userData.name}</h2>
                 <div className="text-sm text-gray-400">{userData.role}</div>
+                
+                {/* MetaMask Wallet Display/Connect for Mobile */}
+                <div className="mt-3 w-full">
+                  {!walletAddress ? (
+                    <button
+                      onClick={connectWallet}
+                      disabled={isConnecting}
+                      className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-medium transition-colors"
+                    >
+                      {isConnecting ? 'Connecting...' : (
+                        <>
+                          <FaEthereum />
+                          <span>Connect MetaMask</span>
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <div className="w-full">
+                      <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white mb-2">
+                        <FaEthereum className="text-orange-400" />
+                        <span className="text-sm">{formatAddress(walletAddress)}</span>
+                      </div>
+                      <button
+                        onClick={disconnectWallet}
+                        className="w-full py-1 px-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300 transition-colors"
+                      >
+                        Disconnect
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                {connectionError && (
+                  <div className="mt-2 text-xs text-red-400 text-center">
+                    {connectionError}
+                  </div>
+                )}
               </div>
 
               <nav className="space-y-1">
@@ -232,13 +368,18 @@ function Profile() {
                   <span>Settings</span>
                 </button>
 
-                <div className="pt-4 mt-4 border-t border-gray-700">
-                  <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
-                    <LogOut className="w-5 h-5" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
+                <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
+                  <FaGraduationCap className="w-5 h-5" />
+                  <span>Go to Course</span>
+                </Link>
               </nav>
+
+              <div className="pt-4 mt-4 border-t border-gray-700">
+                <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
+                  <LogOut className="w-5 h-5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
@@ -261,6 +402,43 @@ function Profile() {
                   <h2 className="text-xl font-bold">{userData.name}</h2>
                   <div className="text-gray-400 text-sm">{userData.role}</div>
                   <div className="text-gray-500 text-xs mt-1">Member since {userData.joined}</div>
+                  
+                  {/* MetaMask Connect Button */}
+                  <div className="mt-4 w-full">
+                    {!walletAddress ? (
+                      <button
+                        onClick={connectWallet}
+                        disabled={isConnecting}
+                        className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-medium transition-colors"
+                      >
+                        {isConnecting ? 'Connecting...' : (
+                          <>
+                            <FaEthereum />
+                            <span>Connect MetaMask</span>
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <div className="w-full">
+                        <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white mb-2">
+                          <FaEthereum className="text-orange-400" />
+                          <span className="text-sm">{formatAddress(walletAddress)}</span>
+                        </div>
+                        <button
+                          onClick={disconnectWallet}
+                          className="w-full py-1 px-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300 transition-colors"
+                        >
+                          Disconnect
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {connectionError && (
+                    <div className="mt-2 text-xs text-red-400 text-center">
+                      {connectionError}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2 pt-4 border-t border-gray-700">
@@ -272,7 +450,7 @@ function Profile() {
                     <User className="w-5 h-5" />
                     <span>Overview</span>
                   </button>
-
+                  
                   <button
                     onClick={() => setActiveTab('certificates')}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
@@ -319,13 +497,32 @@ function Profile() {
           {/* Main Content */}
           <div className="flex-1">
             {/* Header */}
-            <div className="relative z-10 mb-8 flex justify-between items-center">
+            <div className="relative z-10 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h1 className="text-3xl font-bold mb-2">My Profile</h1>
                 <div className="text-gray-400">Welcome back, {userData.name}! Here's an overview of your learning journey.</div>
               </div>
 
               <div className="flex items-center space-x-3">
+                {/* Mobile wallet connect button (only visible on small screens) */}
+                <div className="block sm:hidden">
+                  {!walletAddress ? (
+                    <button
+                      onClick={connectWallet}
+                      disabled={isConnecting}
+                      className="flex items-center justify-center gap-2 py-2 px-4 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-medium transition-colors"
+                    >
+                      <FaEthereum />
+                      <span>{isConnecting ? 'Connecting...' : 'Connect'}</span>
+                    </button>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white">
+                      <FaEthereum className="text-orange-400" />
+                      <span className="text-sm">{formatAddress(walletAddress)}</span>
+                    </div>
+                  )}
+                </div>
+                
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
                   className="relative p-3 rounded-full bg-gray-800/70 backdrop-blur-sm text-white hover:bg-gray-700 transition-colors shadow-lg"
@@ -339,10 +536,10 @@ function Profile() {
             </div>
 
             {/* Content Tabs */}
-            {activeTab === 'overview' && <Overview userData={userData} />}
-            {activeTab === 'certificates' && <Certificates certificates={certificates} />}
+            {activeTab === 'overview' && <Overview userData={userData} walletAddress={walletAddress} />}
+            {activeTab === 'certificates' && <Certificates certificates={certificates} walletAddress={walletAddress} />}
             {activeTab === 'achievements' && <Achievements badges={badges} />}
-            {activeTab === 'settings' && <SettingsComponent userData={userData} />}
+            {activeTab === 'settings' && <SettingsComponent userData={userData} walletAddress={walletAddress} />}
           </div>
         </div>
       </div>
@@ -351,4 +548,3 @@ function Profile() {
 }
 
 export default Profile;
-

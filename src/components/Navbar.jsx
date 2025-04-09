@@ -46,7 +46,7 @@ const Navbar = () => {
     { path: '/roadmap', label: 'Learning Roadmap' },
     { path: '/assignments', label: 'Assignments' },
     { path: '/about', label: 'About' }, 
-    { path: '/profile', label: 'Profile' },
+    // { path: '/profile', label: 'Profile' },
     { path: '/dashboard', label: 'Dashboard' },
   ];
 

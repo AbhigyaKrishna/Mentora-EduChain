@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { ethers } from 'ethers';
 import { FaGraduationCap, FaCertificate, FaChartLine, FaTrophy, FaClock, FaStar, FaPlay, FaCheck, FaLock, FaExpand, FaPause, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
-import ipfsService from '../utils/ipfsStorage';
 import { Code, BarChart } from 'lucide-react';
 import Aurora from './Aurora';
 
@@ -16,7 +14,6 @@ const VideoPlayer = ({ videoUrl, title }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [error, setError] = useState(null);
-  const { theme } = useTheme();
 
   // Convert IPFS URL to HTTP URL if needed
   const getVideoUrl = (url) => {
@@ -279,8 +276,8 @@ const CourseContent = ({ course, onClose, onUpdateProgress }) => {
         <div className={`p-6 border-b ${theme.border}`}>
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold">{course.title}</h2>
               <div className="mt-2 flex flex-wrap items-center gap-4">
+              <h2 className="text-2xl font-bold">{course.title}</h2>
                 <div className="flex items-center">
                   <FaClock className={`mr-2 ${theme.text.secondary}`} />
                   <span className={theme.text.secondary}>4 Topics • 2 Hours Total</span>

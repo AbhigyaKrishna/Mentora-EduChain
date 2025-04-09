@@ -60,7 +60,7 @@ const CourseModal = ({ isOpen, setIsOpen, course, theme }) => {
                 <div className="mt-6">
                   <Dialog.Title
                     as="h3"
-                    className="text-2xl font-bold leading-tight mb-2"
+                    className="text-2xl text-white font-bold leading-tight mb-2"
                   >
                     {course.title}
                   </Dialog.Title>
@@ -76,7 +76,7 @@ const CourseModal = ({ isOpen, setIsOpen, course, theme }) => {
                        'Advanced'} Level
                     </span>
                     <span className={`${theme.text.secondary}`}>•</span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center text-white gap-1">
                       <FaClock className="text-blue-500" />
                       {course.duration} hours
                     </span>
@@ -578,7 +578,7 @@ const Courses = () => {
                 placeholder="Search for courses..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full px-6 text-black py-4 rounded-xl border-2 ${theme.border} ${theme.background} ${theme.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg`}
+                className={`w-full px-6 text-black py-4 rounded-xl border-2 ${theme.border} ${theme.background}  focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg`}
               />
               <FaFilter className="absolute right-6 top-1/2 transform -translate-y-1/2 text-black" />
             </div>
@@ -586,7 +586,7 @@ const Courses = () => {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className={`px-6 py-4 text-black rounded-xl border-2 ${theme.border} ${theme.background} ${theme.text.primary} min-w-[200px] focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg`}
+              className={`px-6 py-4 text-black rounded-xl border-2 ${theme.border} ${theme.background} min-w-[200px] focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg`}
             >
               <option value="all">All Courses</option>
               <option value="active">Active Courses</option>

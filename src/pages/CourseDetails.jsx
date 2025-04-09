@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaStar, FaClock, FaBook, FaChalkboardTeacher, FaGraduationCap, FaCode, FaPlay, FaCheck, FaSpinner, FaWallet, FaEthereum } from 'react-icons/fa';
+import { FaStar, FaClock, FaChalkboardTeacher, FaGraduationCap, FaPlay, FaCheck, FaSpinner, FaWallet, FaEthereum } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useMentoraContract } from '../hooks/useMentoraContract';
 import ipfsService from '../utils/ipfsStorage';
@@ -38,34 +38,13 @@ const CourseDetails = () => {
       try {
         const content = await ipfsService.retrieveFile(contentIpfsHash);
         
-        // Debug logging
-        console.log('Content type:', Object.prototype.toString.call(content));
-        console.log('Raw content:', content);
-        
-        // Handle ArrayBuffer
         if (content instanceof ArrayBuffer) {
           const decoder = new TextDecoder('utf-8');
           const contentString = decoder.decode(content);
-          console.log('Decoded content:', contentString);
-          
-          try {
-            const contentJSON = JSON.parse(contentString);
-            courseContent = contentJSON;
-          } catch (parseError) {
-            console.error('JSON parsing error:', parseError);
-            // Fallback to raw string if JSON parsing fails
-            courseContent = contentString;
-          }
+          courseContent = JSON.parse(contentString);
         } else if (typeof content === 'string') {
-          try {
-            const contentJSON = JSON.parse(content);
-            courseContent = contentJSON;
-          } catch (parseError) {
-            console.error('String parsing error:', parseError);
-            courseContent = content;
-          }
+          courseContent = JSON.parse(content);
         } else {
-          console.log('Content is neither ArrayBuffer nor string:', typeof content);
           courseContent = content;
         }
       } catch (err) {
@@ -114,18 +93,13 @@ const CourseDetails = () => {
 
     try {
       setPurchasing(true);
-      
-      console.log(course);
-      // Convert course price to Wei
       const priceInWei = Web3.utils.toWei(course.price.toString(), 'ether');
       
-      // Check if user has enough balance
       if (balance?.value.lt(priceInWei)) {
         toast.error('Insufficient balance to purchase this course');
         return;
       }
 
-      // Show confirmation dialog
       const confirmed = window.confirm(
         `Are you sure you want to purchase "${course.title}" for ${course.price} ETH?`
       );
@@ -135,29 +109,20 @@ const CourseDetails = () => {
         return;
       }
 
-      // Create loading toast
       const loadingToast = toast.loading('Processing your purchase...');
 
       try {
-        // Get contract client and purchase course
         const tx = await getClient().purchaseCourse(course.id, course.price);
-
-        // Wait for transaction confirmation
         await tx.wait();
 
-        // Success! Update UI and show success message
         toast.success('Successfully enrolled in the course!', {
           id: loadingToast,
         });
         
-        // Update enrollment status
         setIsEnrolled(true);
-        
-        // Refresh the page to show updated enrollment status
         window.location.reload();
 
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = 'Failed to purchase course';
         
         if (error.code === 'ACTION_REJECTED') {
@@ -307,7 +272,7 @@ const CourseDetails = () => {
           <div className="lg:col-span-2">
             {/* Tabs */}
             <div className="flex gap-4 mb-8 border-b border-gray-200 dark:border-gray-700">
-              {['overview', 'curriculum', 'instructor', 'reviews'].map((tab) => (
+              {['overview', 'curriculum', 'benefits'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -321,6 +286,68 @@ const CourseDetails = () => {
                 </button>
               ))}
             </div>
+            
+            {/* Tab Content */}
+            {activeTab === 'curriculum' && !course?.content?.chapters && (
+              <div className="space-y-4">
+                <div className={`p-4 rounded-lg ${theme.card}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">Chapter 1: Introduction to Web3</h4>
+                    <span className={theme.text.secondary}>45 min</span>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2 text-sm">
+                      <FaPlay className="text-blue-500" />
+                      <span>What is Web3?</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <FaPlay className="text-blue-500" />
+                      <span>Understanding Blockchain Technology</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className={`p-4 rounded-lg ${theme.card}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">Chapter 2: Smart Contracts</h4>
+                    <span className={theme.text.secondary}>60 min</span>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2 text-sm">
+                      <FaPlay className="text-blue-500" />
+                      <span>Introduction to Smart Contracts</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <FaPlay className="text-blue-500" />
+                      <span>Writing Your First Smart Contract</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'benefits' && !course?.content?.benefits && (
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold mb-4">Course Benefits</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <FaCheck className="text-green-500 mt-1" />
+                    <span>Comprehensive understanding of Web3 technologies</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <FaCheck className="text-green-500 mt-1" />
+                    <span>Hands-on experience with smart contract development</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <FaCheck className="text-green-500 mt-1" />
+                    <span>Industry-recognized certification upon completion</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <FaCheck className="text-green-500 mt-1" />
+                    <span>Access to exclusive developer community</span>
+                  </li>
+                </ul>
+              </div>
+            )}
 
             {/* Tab Content */}
             <div className="space-y-8">
@@ -369,6 +396,60 @@ const CourseDetails = () => {
                             </li>
                           ))}
                         </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'prerequisites' && (
+                <div>
+                  <h3 className="text-2xl font-bold mb-4">Prerequisites</h3>
+                  <ul className="list-disc pl-5 space-y-2">
+                    {course.content?.prerequisites?.map((prerequisite, index) => (
+                      <li key={index} className={theme.text.secondary}>
+                        {prerequisite}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {activeTab === 'benefits' && (
+                <div>
+                  <h3 className="text-2xl font-bold mb-4">Course Benefits</h3>
+                  <ul className="list-disc pl-5 space-y-2">
+                    {course.content?.benefits?.map((benefit, index) => (
+                      <li key={index} className={theme.text.secondary}>
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {activeTab === 'instructor' && (
+                <div>
+                  <h3 className="text-2xl font-bold mb-4">Instructor</h3>
+                  <p className={theme.text.secondary}>{course.instructorBio}</p>
+                </div>
+              )}
+
+              {activeTab === 'reviews' && (
+                <div>
+                  <h3 className="text-2xl font-bold mb-4">Student Reviews</h3>
+                  <div className="space-y-4">
+                    {course.content?.reviews?.map((review, index) => (
+                      <div key={index} className={`p-4 rounded-lg ${theme.card}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium">{review.studentName}</h4>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <FaStar key={i} className={`text-yellow-400 ${i < review.rating ? '' : 'opacity-50'}`} />
+                            ))}
+                          </div>
+                        </div>
+                        <p className={theme.text.secondary}>{review.comment}</p>
                       </div>
                     ))}
                   </div>

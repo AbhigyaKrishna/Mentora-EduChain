@@ -26,14 +26,6 @@ const Footer = () => {
         { label: 'Support', path: '/support' }
       ]
     },
-    {
-      title: 'Legal',
-      links: [
-        { label: 'Privacy Policy', path: '/privacy' },
-        { label: 'Terms of Service', path: '/terms' },
-        { label: 'Cookie Policy', path: '/cookies' }
-      ]
-    }
   ];
 
   const socialLinks = [
