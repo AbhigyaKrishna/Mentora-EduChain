@@ -16,6 +16,7 @@
     "@google/generative-ai": "^0.24.0",
     "@headlessui/react": "^2.2.1",
     "@heroicons/react": "^2.2.0",
+    "@monaco-editor/react": "^4.7.0",
     "@octokit/rest": "^21.1.1",
     "@opencampus/ocid-connect-js": "^2.0.1",
     "@openzeppelin/contracts": "^5.0.1",
@@ -25,6 +26,7 @@
     "@web3-react/core": "^8.2.3",
     "@web3-react/metamask": "^8.2.4",
     "@web3-storage/w3up-client": "^17.2.0",
+    "@y/websocket-server": "^0.1.1",
     "autoprefixer": "^10.4.17",
     "axios": "^1.6.7",
     "ethers": "^6.13.5",
@@ -45,7 +47,10 @@
     "viem": "^2.26.2",
     "wagmi": "^2.14.16",
     "web3": "^4.16.0",
-    "web3.storage": "^4.5.5"
+    "web3.storage": "^4.5.5",
+    "y-monaco": "^0.1.6",
+    "y-websocket": "^3.0.0",
+    "yjs": "^13.6.24"
   },
   "devDependencies": {
     "@types/react": "^18.2.55",

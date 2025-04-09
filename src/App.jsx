@@ -20,7 +20,10 @@ import NotFound from './pages/NotFound';
 import RoadmapGenerator from './pages/RoadmapGenerator';
 import Contact from './pages/Contact';
 import FAQ from './pages/FAQ';
-
+import ProjectRooms from './pages/ProjectRooms';
+import ProjectRoom from './pages/ProjectRoom';
+import { Toaster } from 'react-hot-toast';
+import { Navigate } from 'react-router-dom';
 // OCConnect configuration
 const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',
@@ -42,7 +45,6 @@ const config = createConfig({
     [arbitrumSepolia.id]: http(),
   },
 });
-
 // Custom Loading Component
 const CustomLoadingComponent = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -79,6 +81,7 @@ const CustomErrorComponent = () => {
   );
 };
 
+
 // Login Callback Handlers
 const loginSuccess = () => {
   console.log('Login successful');
@@ -104,9 +107,12 @@ function App() {
                     <Route path=":id" element={<CourseDetails />} />
                   </Route>
                   <Route path="roadmap" element={<RoadmapGenerator />} />
+                  <Route path="/rooms" element={<ProjectRooms />} />
+                  <Route path="/room/:roomId" element={<ProjectRoom />} />
+                  <Route path="/" element={<Navigate to="/rooms" replace />} />
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="profile" element={<Profile />} />
-                  <Route path="faq" element={<FAQ/>} />
+                  <Route path="faq" element={<FAQ />} />
                   <Route path="create-course" element={<CreateCourse />} />
                   <Route path="about" element={<About />} />
                   <Route path="ai-assignment/:id" element={<AIAssignment />} />

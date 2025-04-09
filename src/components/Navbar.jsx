@@ -42,7 +42,7 @@ const Navbar = () => {
 
   const navLinks = [
     { path: '/courses', label: 'Courses' },
-    { path: '/create-course', label: 'Create Course' },
+    // { path: '/create-course', label: 'Create Course' },
     { path: '/roadmap', label: 'Learning Roadmap' },
     { path: '/assignments', label: 'Assignments' },
     { path: '/about', label: 'About' },
