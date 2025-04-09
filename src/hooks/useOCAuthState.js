@@ -21,11 +21,11 @@ export const useOCAuthState = () => {
   }, [isInitialized, authState, OCId, ethAddress]);
 
   const login = () => {
-    ocAuth.signInWithRedirect({ state: 'opencampus' });
+    ocAuth.signInWithRedirect({ state: 'opencampus', redirectUri: window.location.origin });
   };
 
   const logout = () => {
-    ocAuth.logout();
+    ocAuth.logout(window.location.origin);
   };
 
   const getAuthState = () => {

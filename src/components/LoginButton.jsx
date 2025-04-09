@@ -1,13 +1,13 @@
-import { useOCAuth } from '@opencampus/ocid-connect-js';
+import { useOCAuthState } from '../hooks/useOCAuthState';
 import { useTheme } from '../context/ThemeContext';
 
 export default function LoginButton() {
-  const { ocAuth } = useOCAuth();
-  const { theme } = useTheme();
+  const { login } = useOCAuthState();
+  const { darkMode } = useTheme();
 
   const handleLogin = async () => {
     try {
-      await ocAuth.signInWithRedirect({ state: 'opencampus' });
+      await login();
     } catch (error) {
       console.error('Login error:', error);
     }
@@ -17,7 +17,7 @@ export default function LoginButton() {
     <button
       onClick={handleLogin}
       className={`px-4 py-2 rounded-md ${
-        theme === 'dark' 
+        darkMode 
           ? 'bg-blue-600 text-white hover:bg-blue-700' 
           : 'bg-blue-600 text-white hover:bg-blue-700'
       } transition-colors duration-200 flex items-center gap-2`}

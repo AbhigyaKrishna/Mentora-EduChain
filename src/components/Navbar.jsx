@@ -36,6 +36,10 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+
   const navLinks = [
     { path: '/courses', label: 'Courses' },
     { path: '/create-course', label: 'Create Course' },
@@ -107,7 +111,7 @@ const Navbar = () => {
                     </span>
                   </div>
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className={`px-4 py-2 rounded-full ${
                       darkMode 
                         ? 'bg-red-600 hover:bg-red-700' 
