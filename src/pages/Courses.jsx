@@ -93,8 +93,8 @@ const CourseModal = ({ isOpen, setIsOpen, course, theme }) => {
                           <FaUsers className="text-blue-500 text-xl" />
                         </div>
                         <div>
-                          <div className="text-sm font-medium">Students</div>
-                          <div className="text-2xl font-bold">{course.enrolledUsers}</div>
+                          <div className="text-sm text-white font-medium">Students</div>
+                          <div className="text-2xl text-white font-bold">{course.enrolledUsers}</div>
                         </div>
                       </div>
                     </div>
@@ -104,15 +104,15 @@ const CourseModal = ({ isOpen, setIsOpen, course, theme }) => {
                           <FaStar className="text-yellow-500 text-xl" />
                         </div>
                         <div>
-                          <div className="text-sm font-medium">Rating</div>
-                          <div className="text-2xl font-bold">{course.rating || '4.5'}</div>
+                          <div className="text-sm text-white font-medium">Rating</div>
+                          <div className="text-2xl text-white font-bold">{course.rating || '4.5'}</div>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4 mb-6">
-                    <h4 className="text-lg font-semibold">What you'll learn:</h4>
+                    {/* <h4 className="text-lg font-semibold">What you'll learn:</h4> */}
                     <ul className="grid grid-cols-2 gap-3">
                       {course.content?.learningObjectives?.slice(0, 6).map((objective, index) => (
                         <li key={index} className="flex items-start gap-2">
