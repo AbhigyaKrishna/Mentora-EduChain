@@ -4,6 +4,8 @@ import { WagmiProvider, createConfig, http } from 'wagmi';
 import { mainnet, sepolia, arbitrumSepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { injected } from 'wagmi/connectors';
+import { useMentoraContract } from './hooks/useMentoraContract';
+import { useAssignmentManager } from './hooks/useAssignmentManager';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import CourseDetails from './pages/CourseDetails';
@@ -29,7 +31,7 @@ const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',
   redirectUri: `${window.location.origin}/redirect`,
   referralCode: 'MENTORA',
-  storageType: 'local',
+  storageType: 'cookie',
 };
 
 // Create a client for react-query
@@ -83,9 +85,14 @@ const CustomErrorComponent = () => {
 
 
 // Login Callback Handlers
-const loginSuccess = () => {
-  console.log('Login successful');
-  window.location.href = '/dashboard';
+const loginSuccess = async () => {
+  try {
+    console.log('Login successful');
+    window.location.href = '/dashboard';
+  } catch (error) {
+    console.error('Error initializing contracts:', error);
+    // You might want to show an error message to the user here
+  }
 };
 
 const loginError = (error) => {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { MentoraClient } from '../utils/mentoraBlockchain';
-
+import { useOCAuthState } from './useOCAuthState';
 /**
  * Custom hook for managing the MentoraClient client
  * @returns {Object} Client instance and utility functions
@@ -9,12 +9,13 @@ export const useMentoraContract = () => {
   const [client, setClient] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState(null);
+  const { ethAddress } = useOCAuthState();
 
   // Initialize the client
-  const initialize = useCallback((provider, contractAddress, account) => {
+  const initialize = useCallback((provider = window.ethereum, account = ethAddress ? ethAddress : window.ethereum.selectedAddress) => {
     try {
       if (!client) {
-        const newClient = new MentoraClient(provider, contractAddress);
+        const newClient = new MentoraClient(provider, import.meta.env.VITE_COURSE_CONTRACT_ADDRESS);
         newClient.setDefaultAccount(account);
         setClient(newClient);
         setIsInitialized(true);
@@ -25,25 +26,20 @@ export const useMentoraContract = () => {
       setError(err.message);
       throw err;
     }
-  }, [client]);
+  }, [client, ethAddress]);
 
   // Get the client instance, initializing if needed
   const getClient = useCallback(() => {
     if (!client) {
       try {
-        // Get provider, address and account from window.ethereum
-        const provider = window.ethereum;
-        const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
-        const account = window.ethereum.selectedAddress;
-        
-        return initialize(provider, contractAddress, account);
+        return initialize();
       } catch (err) {
         setError(err.message);
         throw new Error('Failed to initialize MentoraClient client: ' + err.message);
       }
     }
     return client;
-  }, [client, initialize]);
+  }, [client, ethAddress, initialize]);
 
   // Reset the client (useful for testing or when switching accounts)
   const reset = useCallback(() => {

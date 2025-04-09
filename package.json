@@ -19,7 +19,6 @@
     "@monaco-editor/react": "^4.7.0",
     "@octokit/rest": "^21.1.1",
     "@opencampus/ocid-connect-js": "^2.0.1",
-    "@openzeppelin/contracts": "^5.0.1",
     "@rainbow-me/rainbowkit": "^2.2.4",
     "@reactflow/node-resizer": "^2.2.14",
     "@tanstack/react-query": "^5.72.0",
@@ -47,7 +46,6 @@
     "viem": "^2.26.2",
     "wagmi": "^2.14.16",
     "web3": "^4.16.0",
-    "web3.storage": "^4.5.5",
     "y-monaco": "^0.1.6",
     "y-websocket": "^3.0.0",
     "yjs": "^13.6.24"
