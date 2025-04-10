@@ -37,11 +37,11 @@ const RoomSidebar = ({ room, activeFile, onFileSelect, connectedUsers = [] }) =>
           {connectedUsers.map(user => (
             <li key={user.id} className="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg shadow-sm">
               <div 
-                className="h-3 w-3 rounded-full" 
+                className="h-3 w-3  text-black rounded-full" 
                 style={{ backgroundColor: user.color }}
               />
               <div className="flex-1">
-                <span className="text-sm font-semibold">{user.name}</span>
+                <span className="text-sm text-black font-semibold">{user.name}</span>
                 <span className="text-xs text-gray-500 ml-2">({user.id})</span>
               </div>
             </li>
