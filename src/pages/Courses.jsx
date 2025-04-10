@@ -578,21 +578,21 @@ const Courses = () => {
                 placeholder="Search for courses..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full px-6 text-black py-4 rounded-xl border-2 ${theme.border} ${theme.background}  focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg`}
+                className={`w-full px-6 text-white py-4 rounded-xl border-2 bg-gray-800 border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg placeholder-gray-400`}
               />
-              <FaFilter className="absolute right-6 top-1/2 transform -translate-y-1/2 text-black" />
+              <FaFilter className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className={`px-6 py-4 text-black rounded-xl border-2 ${theme.border} ${theme.background} min-w-[200px] focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg`}
+              className={`px-6 py-4 text-white bg-gray-800 rounded-xl border-2 border-gray-700 min-w-[200px] focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg`}
             >
-              <option value="all">All Courses</option>
-              <option value="active">Active Courses</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
+              <option value="all" className="bg-gray-800 text-white">All Courses</option>
+              <option value="active" className="bg-gray-800 text-white">Active Courses</option>
+              <option value="beginner" className="bg-gray-800 text-white">Beginner</option>
+              <option value="intermediate" className="bg-gray-800 text-white">Intermediate</option>
+              <option value="advanced" className="bg-gray-800 text-white">Advanced</option>
             </select>
           </div>
         </motion.div>

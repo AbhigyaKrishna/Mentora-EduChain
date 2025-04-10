@@ -527,38 +527,44 @@ const CreateCourse = () => {
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r ${theme.primary} hover:shadow-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              {loading ? (
-                <span className="flex items-center">
-                  <FaSpinner className="animate-spin mr-2" />
-                  Creating Course...
-                </span>
-              ) : (
-                'Create Course'
-              )}
-            </button>
-          </div>
-
-          {/* Upload Progress */}
-          {loading && uploadProgress > 0 && (
-            <div className="mt-4">
-              <div className="flex justify-between mb-1">
-                <span className="text-sm">Upload Progress</span>
-                <span className="text-sm">{uploadProgress}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div
-                  className="bg-blue-600 h-2.5 rounded-full"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r ${theme.primary} hover:shadow-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {loading ? (
+                  <span className="flex items-center">
+                    <FaSpinner className="animate-spin mr-2" />
+                    Creating Course...
+                  </span>
+                ) : (
+                  'Create Course'
+                )}
+              </button>
             </div>
-          )}
+
+            {/* Upload Progress */}
+            {loading && uploadProgress > 0 && (
+              <div className="w-full">
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm">Upload Progress</span>
+                  <span className="text-sm">
+                    {uploadProgress > 100 ? 100 : Math.round(uploadProgress)}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                    style={{ 
+                      width: `${uploadProgress > 100 ? 100 : Math.round(uploadProgress)}%`
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </form>
       </div>
     </div>
