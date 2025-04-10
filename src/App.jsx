@@ -29,6 +29,10 @@ import Certificates from './pages/Certificates';
 import CoursePage from './pages/CoursePage';
 import { CoinsProvider } from './context/CoinsContext';
 import Instructors from './pages/Instructors';
+import Privacy from './pages/Privacy';
+import Careers from './pages/Careers';
+import Documentation from './pages/Documentation';
+import Blog from './pages/Blog';
 
 // OCConnect configuration
 const ocConnectOpts = {
@@ -119,9 +123,8 @@ function App() {
                     <Route path=":id" element={<CourseDetails />} />
                   </Route>
                   <Route path="roadmap" element={<RoadmapGenerator />} />
-                  <Route path="/rooms" element={<ProjectRooms />} />
-                  <Route path="/room/:roomId" element={<ProjectRoom />} />
-                  <Route path="/" element={<Navigate to="/rooms" replace />} />
+                  <Route path="rooms" element={<ProjectRooms />} />
+                  <Route path="room/:roomId" element={<ProjectRoom />} />
                   <Route path="profile" element={<Dashboard />} />
                   <Route path="dashboard" element={<Profile />} />
                   <Route path="faq" element={<FAQ />} />
@@ -134,8 +137,12 @@ function App() {
                   <Route path="rewards" element={<Rewards />} />
                   <Route path="certificates" element={<Certificates />} />
                   <Route path="course/:courseId" element={<CoursePage />} />
-                  <Route path="*" element={<NotFound />} />
                   <Route path="instructors" element={<Instructors />} />
+                  <Route path="privacy" element={<Privacy />} />
+                  <Route path="careers" element={<Careers />} />
+                  <Route path="docs" element={<Documentation />} />
+                  <Route path="blog" element={<Blog />} />
+                  <Route path="*" element={<NotFound />} />
                   <Route
                     path="/redirect"
                     element={
