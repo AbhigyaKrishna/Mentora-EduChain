@@ -25,13 +25,13 @@ const Assignments = () => {
       setLoading(true);
       const client = getClient();
       
-      // Get all assignments
-      const fetchedAssignments = (await client.getAllAssignments())
-        .map((assignment, index) => ({
-            id: index,
-            ...assignment
-        }));
-      
+      const fetchedAssignments = [];
+      for (let i = 0; i < await client.getAssignmentCounter(); i++) {
+        fetchedAssignments.push({
+          id: i,
+          ...await client.getAssignment(i)
+        });
+      }
       setAssignments(fetchedAssignments);
     } catch (err) {
       console.error('Error fetching assignments:', err);

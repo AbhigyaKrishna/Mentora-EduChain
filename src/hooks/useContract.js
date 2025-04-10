@@ -6,10 +6,10 @@ import { useOCAuthState } from './useOCAuthState';
 
 /**
  * Custom hook for managing blockchain clients (CourseManager, AssignmentManager, and MentoraToken)
- * @param {string} contract - Type of client to use ('course', 'assignment', 'token', or 'both')
+ * @param {string} contract - Type of client to use ('course', 'assignment', 'token', or 'all')
  * @returns {Object} Client instances and utility functions
  */
-export const useContract = (contract = 'both') => {
+export const useContract = (contract = 'all') => {
   const [courseManager, setCourseManager] = useState(null);
   const [assignmentManager, setAssignmentManager] = useState(null);
   const [mentoraToken, setMentoraToken] = useState(null);
@@ -22,40 +22,40 @@ export const useContract = (contract = 'both') => {
     try {
       if (isInitialized) return;
 
-      // Check and initialize CourseManager if not already initialized
-      if (!courseManager) {
-        const newCourseManager = new CourseManager(provider);
-        setCourseManager(newCourseManager);
-      }
-
-      // Check and initialize AssignmentManager if not already initialized
-      if (!assignmentManager) {
-        const newAssignmentManager = new AssignmentManager(provider);
-        setAssignmentManager(newAssignmentManager);
-      }
-
-      // Check and initialize MentoraToken if not already initialized
-      if (!mentoraToken) {
-        const newMentoraToken = new MentoraToken(provider);
-        setMentoraToken(newMentoraToken);
-      }
-
-      if (mentoraToken && assignmentManager && courseManager) {
-        setIsInitialized(true);
-      }
+      // Initialize all managers first
+      const newCourseManager = new CourseManager(provider);
+      const newAssignmentManager = new AssignmentManager(provider);
+      const newMentoraToken = new MentoraToken(provider);
+      
+      // Then update state
+      setCourseManager(newCourseManager);
+      setAssignmentManager(newAssignmentManager);
+      setMentoraToken(newMentoraToken);
+      
+      // Set initialized after all state updates
+      setIsInitialized(true);
+      
+      return {
+        courseManager: newCourseManager,
+        assignmentManager: newAssignmentManager,
+        mentoraToken: newMentoraToken
+      };
     } catch (err) {
       setError(err.message);
       throw err;
     }
-  }, [ethAddress, courseManager, assignmentManager, mentoraToken]);
+  }, [ethAddress, isInitialized]);
 
   // Get the client instance(s), initializing if needed
   const getClient = useCallback(() => {
-    if ((!courseManager && (contract === 'course' || contract === 'both')) ||
-        (!assignmentManager && (contract === 'assignment' || contract === 'both')) ||
-        (!mentoraToken && (contract === 'token' || contract === 'both'))) {
+    if (!isInitialized) {
       try {
-        return initialize();
+        const clients = initialize();
+        
+        if (contract === 'course') return clients.courseManager;
+        if (contract === 'assignment') return clients.assignmentManager;
+        if (contract === 'token') return clients.mentoraToken;
+        return clients;
       } catch (err) {
         setError(err.message);
         throw new Error(`Failed to initialize blockchain client(s): ${err.message}`);
@@ -66,17 +66,17 @@ export const useContract = (contract = 'both') => {
     if (contract === 'assignment') return assignmentManager;
     if (contract === 'token') return mentoraToken;
     return { course: courseManager, assignment: assignmentManager, token: mentoraToken };
-  }, [courseManager, assignmentManager, mentoraToken, ethAddress, initialize, contract]);
+  }, [courseManager, assignmentManager, mentoraToken, initialize, contract, isInitialized]);
 
   // Reset the client(s)
   const reset = useCallback(() => {
-    if (contract === 'course' || contract === 'both') {
+    if (contract === 'course' || contract === 'all') {
       setCourseManager(null);
     }
-    if (contract === 'assignment' || contract === 'both') {
+    if (contract === 'assignment' || contract === 'all') {
       setAssignmentManager(null);
     }
-    if (contract === 'token' || contract === 'both') {
+    if (contract === 'token' || contract === 'all') {
       setMentoraToken(null);
     }
     setIsInitialized(false);
