@@ -42,6 +42,7 @@ import AffiliateProgram from './pages/AffiliateProgram';
 import BecomeInstructor from './pages/BecomeInstructor';
 import Terms from './pages/Terms';
 import CookiePolicy from './pages/CookiePolicy';
+import Accessibility from './pages/Accessibility';
 // OCConnect configuration
 const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',
@@ -159,6 +160,7 @@ function App() {
                   <Route path="teach" element={<BecomeInstructor />} />
                   <Route path="terms" element={<Terms />} />
                   <Route path="cookies" element={<CookiePolicy />} />
+                  <Route path="accessibility" element={<Accessibility />} />
                   <Route path="*" element={<NotFound />} />
                   <Route
                     path="/redirect"
