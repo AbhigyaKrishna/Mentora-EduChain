@@ -68,7 +68,17 @@ class AssignmentManager extends BaseContract {
    * @returns {Promise<object>} Assignment details
    */
   async getAssignment(assignmentId) {
-    return this.call('getAssignment', [assignmentId]);
+    const data = await this.call('getAssignment', [assignmentId]);
+    return {
+      title: data.title,
+      description: data.description,
+      question: data.question,
+      evaluationCriteria: data.evaluationCriteria,
+      metaPromptIpfsHash: data.metaPromptIpfsHash,
+      createdAt: parseInt(data.createdAt),
+      creator: data.creator,
+      isActive: data.isActive,
+    };
   }
 
   /**

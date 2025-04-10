@@ -787,19 +787,6 @@
   },
   {
     "inputs": [],
-    "name": "mentoraToken",
-    "outputs": [
-      {
-        "internalType": "contract MentoraToken",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "owner",
     "outputs": [
       {
