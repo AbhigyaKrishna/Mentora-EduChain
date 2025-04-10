@@ -56,9 +56,8 @@ const Footer = () => {
 
   const socialLinks = [
     { icon: <FaTwitter />, url: 'https://twitter.com', label: 'Twitter' },
-    { icon: <FaGithub />, url: 'https://github.com/vaibhavkothari33/Mentora', label: 'GitHub' },
+    { icon: <FaGithub />, url: 'https://github.com/AbhigyaKrishna/Mentora-EduChain', label: 'GitHub' },
     { icon: <FaLinkedin />, url: 'https://linkedin.com', label: 'LinkedIn' },
-    { icon: <FaDiscord />, url: 'https://discord.com', label: 'Discord' }
   ];
 
   const contactInfo = [
