@@ -44,10 +44,8 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// Add these constants at the top of the file
-const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID; // Replace with your GitHub OAuth App Client ID
+const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 const GITHUB_REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI;
-const GITHUB_CLIENT_SECRET = import.meta.env.VITE_GITHUB_CLIENT_SECRET; // Replace with your GitHub OAuth App Client Secret
 
 async function getRepoStructure(repoUrl) {
   try {
@@ -115,7 +113,8 @@ const GitHubRepoSelector = ({ onSelect, selectedRepo, darkMode, onRepoSelect }) 
       setError(null);
       
       // Construct GitHub OAuth URL
-      const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_REDIRECT_URI}&scope=repo`;
+      const scope = 'repo user';
+      const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_REDIRECT_URI}&scope=${scope}`;
       
       // Open GitHub OAuth in a popup
       const width = 600;
@@ -154,67 +153,104 @@ const GitHubRepoSelector = ({ onSelect, selectedRepo, darkMode, onRepoSelect }) 
       setLoading(false);
     }
   };
-
+  
   const handleGitHubCode = async (code) => {
     try {
-      // Exchange code for access token
-      const tokenResponse = await fetch('/github/login/oauth/access_token', {
+      // Exchange code for access token using a backend proxy for security
+      const tokenResponse = await fetch('/api/github/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-          client_secret: import.meta.env.VITE_GITHUB_CLIENT_SECRET, // This should be handled securely
-          code,
-          redirect_uri: import.meta.env.VITE_GITHUB_REDIRECT_URI,
-        }),
+        body: JSON.stringify({ code }),
       });
-
-      const tokenData = await tokenResponse.json();
       
+      const tokenData = await tokenResponse.json();
       if (tokenData.error) {
         throw new Error(tokenData.error_description || 'Failed to get access token');
       }
-
+      
       const accessToken = tokenData.access_token;
-
-      // Fetch ALL repositories (update the fetch call)
-      const allRepos = [];
-      let page = 1;
-      let hasMore = true;
-
-      while (hasMore) {
-        const reposResponse = await fetch(`/api/user/repos?page=${page}&per_page=100`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/vnd.github.v3+json',
-          },
-        });
-
-        const pageRepos = await reposResponse.json();
-        
-        if (pageRepos.length === 0) {
-          hasMore = false;
-        } else {
-          allRepos.push(...pageRepos);
-          page += 1;
-        }
-      }
-
-      setRepos(allRepos.map(repo => ({
-        id: repo.id,
-        full_name: repo.full_name,
-        description: repo.description,
-        private: repo.private,
-        updated_at: repo.updated_at,
-      })));
-
-      setLoading(false);
+      
+      // Store token in localStorage or secure cookie for future requests
+      localStorage.setItem('github_token', accessToken);
+      
+      // Fetch ALL repositories with pagination
+      await fetchUserData(accessToken);
     } catch (error) {
       console.error('GitHub auth error:', error);
       setError(error.message || 'Failed to authenticate with GitHub');
+      setLoading(false);
+    }
+  };
+
+  const fetchUserData = async (token) => {
+    try {
+      const response = await fetch('https://api.github.com/user', {
+        headers: {
+          Authorization: `token ${token}`
+        }
+      });
+      
+      if (!response.ok) throw new Error('Failed to fetch user data');
+      
+      const userData = await response.json();
+      setUser(userData);
+      fetchUserRepos(token);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      localStorage.removeItem('github_token');
+    }
+  };
+  
+  const fetchUserRepos = async (token) => {
+    setLoading(true);
+    try {
+      const allRepos = [];
+      let page = 1;
+      let hasMore = true;
+      
+      while (hasMore) {
+        const response = await fetch(
+          `https://api.github.com/user/repos?page=${page}&per_page=100&sort=updated`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        
+        if (!response.ok) throw new Error('Failed to fetch repositories');
+        
+        const reposPage = await response.json();
+        if (reposPage.length === 0) {
+          hasMore = false;
+        } else {
+          allRepos.push(...reposPage);
+          page++;
+        }
+      }
+      
+      const formattedRepos = allRepos.map(repo => ({
+        id: repo.id,
+        name: repo.name,
+        full_name: repo.full_name,
+        description: repo.description || '',
+        private: repo.private,
+        updated_at: repo.updated_at,
+        html_url: repo.html_url,
+        default_branch: repo.default_branch,
+        owner: {
+          login: repo.owner.login,
+          avatar_url: repo.owner.avatar_url
+        }
+      }));
+      
+      setRepos(formattedRepos);
+    } catch (error) {
+      setError('Failed to fetch repositories: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
