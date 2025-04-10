@@ -38,6 +38,7 @@ import Community from './pages/Community';
 import Pricing from './pages/Pricing';
 import Enterprise from './pages/Enterprise';
 import Partners from './pages/Partners';
+import AffiliateProgram from './pages/AffiliateProgram';
 
 // OCConnect configuration
 const ocConnectOpts = {
@@ -152,6 +153,7 @@ function App() {
                   <Route path="pricing" element={<Pricing />} />
                   <Route path="enterprise" element={<Enterprise />} />
                   <Route path="partners" element={<Partners />} />
+                  <Route path="affiliates" element={<AffiliateProgram />} />
                   <Route path="*" element={<NotFound />} />
                   <Route
                     path="/redirect"
