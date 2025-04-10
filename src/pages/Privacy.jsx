@@ -88,8 +88,50 @@ const Privacy = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} pb-20`}
+      className={`min-h-screen relative ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} pb-20`}
     >
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{
+            x: [0, 100, -100, 0],
+            y: [0, -100, 100, 0],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 ${
+            darkMode ? 'bg-blue-500' : 'bg-blue-200'
+          }`}
+          style={{
+            top: '10%',
+            left: '10%'
+          }}
+        />
+        <motion.div 
+          animate={{
+            x: [0, -100, 100, 0],
+            y: [0, 100, -100, 0],
+            rotate: [0, -180, -360],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute w-96 h-96 rounded-full blur-3xl opacity-20 ${
+            darkMode ? 'bg-purple-500' : 'bg-purple-200'
+          }`}
+          style={{
+            bottom: '10%',
+            right: '10%'
+          }}
+        />
+      </div>
+
       {/* Header Section */}
       <div className={`w-full py-16 ${darkMode ? 'bg-gradient-to-r from-blue-900/30 to-purple-900/30' : 'bg-gradient-to-r from-blue-50 to-indigo-50'}`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6">

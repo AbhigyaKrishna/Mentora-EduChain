@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaGraduationCap, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useOCAuthState } from '../hooks/useOCAuthState';
@@ -8,6 +8,7 @@ import LoginButton from './LoginButton';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { darkMode, toggleDarkMode } = useTheme();
   const { isAuthenticated, isLoading, OCId, logout } = useOCAuthState();
 
@@ -15,6 +16,14 @@ const Navbar = () => {
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
+
+  // Redirect if accessing restricted route without authentication
+  useEffect(() => {
+    const restrictedPaths = ['/courses', '/roadmap', '/assignments', '/dashboard', '/about'];
+    if (!isLoading && !isAuthenticated && restrictedPaths.some(path => location.pathname.startsWith(path))) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, isLoading, location.pathname, navigate]);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -40,15 +49,27 @@ const Navbar = () => {
     logout();
   };
 
-  const navLinks = [
+  // Define authentication-protected links
+  const authLinks = [
+    { path: '/dashboard', label: 'Dashboard' },
     { path: '/courses', label: 'Courses' },
-    // { path: '/create-course', label: 'Create Course' },
     { path: '/roadmap', label: 'Learning Roadmap' },
     { path: '/assignments', label: 'Assignments' },
-    { path: '/about', label: 'About' }, 
-    // { path: '/profile', label: 'Profile' },
-    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/about', label: 'About' },
   ];
+
+  // Public links for non-authenticated users
+  const publicLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/documentation', label: 'Documentation' }, 
+    { path: '/about', label: 'About' },
+    { path: '/faqs', label: 'FAQs' },
+    { path: '/pricing', label: 'Pricing' },
+    // { path: '/privacy', label: 'Privacy' },
+  ];
+  
+  // Use authenticated links if logged in, otherwise use public links
+  const navLinks = isAuthenticated ? authLinks : publicLinks;
 
   return (
     <nav className={`${darkMode ? 'bg-gray-900/90' : 'bg-white/90'} backdrop-blur-md shadow-lg sticky top-0 z-50 transition-all duration-300 border-b ${darkMode ? 'border-gray-800' : 'border-gray-200'}`}>

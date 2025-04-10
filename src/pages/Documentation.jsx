@@ -169,9 +169,47 @@ const Documentation = () => {
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'} relative overflow-hidden`}>
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 z-0">
-        <div className={`absolute top-0 left-0 w-full h-full bg-gradient-to-br ${darkMode ? 'from-blue-900/20 via-purple-900/10 to-gray-900' : 'from-blue-100/50 via-purple-100/30 to-white'}`}></div>
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{
+            x: [0, 100, -100, 0],
+            y: [0, -100, 100, 0],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute -top-40 -right-40 w-96 h-96 rounded-full ${darkMode ? 'bg-blue-900/10' : 'bg-blue-100/50'}`}
+        />
+        <motion.div 
+          animate={{
+            x: [0, -100, 100, 0],
+            y: [0, 100, -100, 0],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute top-1/3 -left-20 w-64 h-64 rounded-full ${darkMode ? 'bg-purple-900/10' : 'bg-purple-100/50'}`}
+        />
+        <motion.div 
+          animate={{
+            x: [0, 150, -150, 0],
+            y: [0, -150, 150, 0],
+            rotate: [0, -180, -360],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute -bottom-20 right-1/4 w-80 h-80 rounded-full ${darkMode ? 'bg-indigo-900/10' : 'bg-indigo-100/50'}`}
+        />
       </div>
       
       {/* Hero Section */}

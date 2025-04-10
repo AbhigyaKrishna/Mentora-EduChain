@@ -5,7 +5,7 @@ import { FaUsers, FaMoneyBillWave, FaChartLine, FaHandshake, FaArrowRight } from
 import { useTheme } from '../context/ThemeContext';
 
 const AffiliateProgram = () => {
-  const { theme } = useTheme();
+  const { theme, darkMode } = useTheme();
 
   const benefits = [
     {
@@ -31,7 +31,50 @@ const AffiliateProgram = () => {
   ];
 
   return (
-    <div className="flex-grow">
+    <div className="flex-grow relative">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{
+            x: [0, 100, -100, 0],
+            y: [0, -100, 100, 0],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute -top-40 -right-40 w-96 h-96 rounded-full ${darkMode ? 'bg-blue-900/10' : 'bg-blue-100/50'}`}
+        />
+        <motion.div 
+          animate={{
+            x: [0, -100, 100, 0],
+            y: [0, 100, -100, 0],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute top-1/3 -left-20 w-64 h-64 rounded-full ${darkMode ? 'bg-purple-900/10' : 'bg-purple-100/50'}`}
+        />
+        <motion.div 
+          animate={{
+            x: [0, 150, -150, 0],
+            y: [0, -150, 150, 0],
+            rotate: [0, -180, -360],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute -bottom-20 right-1/4 w-80 h-80 rounded-full ${darkMode ? 'bg-indigo-900/10' : 'bg-indigo-100/50'}`}
+        />
+      </div>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0">

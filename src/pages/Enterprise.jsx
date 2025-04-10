@@ -39,8 +39,34 @@ const Enterprise = () => {
     <div className="flex-grow">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute w-full h-full bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-indigo-500/10" />
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div 
+            animate={{
+              x: [0, 100, -100, 0],
+              y: [0, -100, 100, 0],
+              rotate: [0, 180, 360],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className="absolute w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl -top-48 -left-48"
+          />
+          <motion.div 
+            animate={{
+              x: [0, -100, 100, 0],
+              y: [0, 100, -100, 0],
+              rotate: [0, -180, -360],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className="absolute w-96 h-96 bg-gradient-to-r from-indigo-500/20 to-pink-500/20 rounded-full blur-3xl -bottom-48 -right-48"
+          />
         </div>
         
         <div className="relative max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8">

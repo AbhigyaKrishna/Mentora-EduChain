@@ -61,9 +61,9 @@ const Footer = () => {
   ];
 
   const contactInfo = [
-    { icon: <FaEnvelope />, text: 'contact@mentora.com' },
-    { icon: <FaPhoneAlt />, text: '+1 (888) 123-4567' },
-    { icon: <FaMapMarkerAlt />, text: 'San Francisco, CA' }
+    { icon: <FaEnvelope />, text: 'contact.vaibhavkothari@gmail.com' },
+    // { icon: <FaPhoneAlt />, text: '+91 9826000000' },
+    { icon: <FaMapMarkerAlt />, text: 'Greater Noida, India' }
   ];
 
   return (

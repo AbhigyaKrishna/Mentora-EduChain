@@ -6,13 +6,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[View Demo](https://mentora-rho.vercel.app/) | [Smart Contracts](https://github.com/AbhigyaKrishna/mentora-contracts) | [Frontend Code](https://github.com/vaibhavkothari33/Mentora)
+[View Demo](https://mentora-rust.vercel.app/) | [Smart Contracts](https://github.com/AbhigyaKrishna/mentora-contracts) | [Frontend Code](https://github.com/AbhigyaKrishna/Mentora-EduChain)
 
 </div>
 
 ## 🏆 Hackaccino Hackathon Project
 
-Mentora is an innovative Web3 education platform that combines blockchain technology with AI-powered learning assistance to create a next-generation learning experience. Built during Hackaccino 2025, our platform aims to revolutionize how people learn and interact with Web3 technologies.
+Mentora is an innovative Web3 education platform that combines blockchain technology with AI-powered learning assistance to create a next-generation learning experience. Built during EDU Chain Hackathon: Semester 3 , our platform aims to revolutionize how people learn and interact with Web3 technologies.
 
 ## 🔐 Contract Details
 * Mentora Contract Address: 0x032b4EcfFB926DF1611224e76812cD870fb8E0Bb 
@@ -43,15 +43,22 @@ Mentora addresses these challenges by providing:
 - **Personalized Learning Paths**: AI-curated content based on your progress
 - **Code Analysis**: Instant feedback on your assignments
 
-### 🔗 Blockchain Features
+### 💬 Room Chat 
+- **Connect and code**: together in real-time chat rooms
+- **Messaging System**: Secure blockchain-based messaging between users
+- **Code Collaboration**: Share and review code in private rooms
 
+### 🔗 Blockchain Features
 - **Wallet Integration**: Seamless Web3 wallet connection
 - **Smart Contract Interaction**: Real-world blockchain experience
+
 
 ### 📚 Learning Platform
 - **Interactive Courses**: Hands-on learning experience
 - **Progress Tracking**: Detailed analytics of your journey
 - **Community Features**: Learn and grow together
+- **Live Coding Rooms**: Join rooms to code and learn with peers
+- **Real-time Messaging**: Chat with other learners while coding
 
 ## 🛠️ Technology Stack
 
@@ -62,11 +69,11 @@ Mentora addresses these challenges by providing:
 - Ethers.js
 
 ### AI Integration
-- Claude AI API
 - Custom AI Components
+-  AI Agent
 
 ### Blockchain
-- Ethereum Smart Contracts
+- Smart Contracts
 - IPFS Storage
 - NFT Implementation
 
@@ -191,6 +198,7 @@ flowchart LR
 
 ### 3. Course Interface
 - Video player with controls
+- IPFS video storage
 - Course content organization
 - Progress indicators
 - Interactive assignments
@@ -202,6 +210,12 @@ flowchart LR
 - NFT certificate showcase
 - Learning statistics
 - Activity timeline
+- Rewards 
+
+### 5. Room Chat
+- Connect and code: together in real-time chat rooms
+- Messaging System: Secure messaging between users
+- Code Collaboration: Share and review code in private rooms
 
 ## 🔒 Security Features
 
@@ -234,18 +248,6 @@ flowchart LR
 5. Open a Pull Request
 
 
-## 🚀 Getting Started
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/vaibhavkothari33/Mentora.git
-cd Mentora
-```
-
-2. **Install dependencies**
-```bash
-npm install
-```
 
 3. **Set up environment variables**
 Create a `.env` file in the root directory:
@@ -275,7 +277,7 @@ npm run build
 
 ```
 Directory structure:
-└── vaibhavkothari33-mentora/
+└── abhigyakrishna-mentora-educhain/
     ├── README.md
     ├── eslint.config.js
     ├── index.html
@@ -297,49 +299,95 @@ Directory structure:
         │           └── EduChain.json
         ├── assets/
         ├── components/
+        │   ├── CoinsDisplay.jsx
+        │   ├── CollaborativeEditor.jsx
+        │   ├── CreateRoomModal.jsx
+        │   ├── ErrorBoundary.jsx
         │   ├── Footer.jsx
         │   ├── Layout.jsx
+        │   ├── LoginButton.jsx
         │   ├── Navbar.jsx
-        │   ├── WalletConnect.jsx
+        │   ├── ProtectedRoute.jsx
+        │   ├── RoomChat.jsx
+        │   ├── RoomSidebar.jsx
         │   ├── edges/
         │   │   └── AnimatedEdge.jsx
+        │   ├── illustrations/
+        │   │   └── EmptyState.jsx
         │   ├── nodes/
         │   │   ├── RoadmapMiniMap.jsx
         │   │   ├── RoadmapNode.jsx
         │   │   └── StepNode.jsx
+        │   ├── Profile/
+        │   │   ├── Achievements.jsx
+        │   │   ├── Certificates.jsx
+        │   │   ├── CourseModule.jsx
+        │   │   ├── OverView.jsx
+        │   │   └── Settings.jsx
         │   └── roadmap/
         │       └── ProgressIndicator.jsx
         ├── config/
         │   ├── contract.js
         │   └── gemini.js
         ├── context/
+        │   ├── CoinsContext.jsx
+        │   ├── NetworkContext.jsx
         │   └── ThemeContext.jsx
         ├── contracts/
-        │   ├── CertificateNFT.sol
-        │   ├── EduChain.json
-        │   └── EduChain.sol
+        │   ├── AssignmentManager.js
+        │   ├── BaseContract.js
+        │   ├── CourseManager.js
+        │   ├── MentoraToken.js
+        │   └── abis/
+        │       ├── AssignmentManager.json
+        │       ├── CourseManager.json
+        │       └── MentoraToken.json
         ├── data/
         │   ├── aiAssignmentsData.js
         │   └── assignments.js
         ├── hooks/
         │   ├── useAgent.js
-        │   └── useMentoraContract.js
+        │   ├── useContract.js
+        │   ├── useOCAuthState.js
+        │   └── useWalletConnection.js
         ├── pages/
         │   ├── About.jsx
+        │   ├── Accessibility.jsx
+        │   ├── AffiliateProgram.jsx
         │   ├── AIAssignment.jsx
         │   ├── Assignments.jsx
+        │   ├── AssignmentsOld.jsx
         │   ├── Aurora.jsx
+        │   ├── BecomeInstructor.jsx
+        │   ├── Blog.jsx
+        │   ├── Careers.jsx
+        │   ├── Certificates.jsx
+        │   ├── Community.jsx
         │   ├── Contact.jsx
+        │   ├── CookiePolicy.jsx
         │   ├── CourseDetails.jsx
+        │   ├── CoursePage.jsx
         │   ├── Courses.jsx
+        │   ├── CreateAssignment.jsx
         │   ├── CreateCourse.jsx
         │   ├── Dashboard.jsx
+        │   ├── Documentation.jsx
+        │   ├── Enterprise.jsx
         │   ├── FAQ.jsx
         │   ├── Home.jsx
+        │   ├── Instructors.jsx
         │   ├── NotFound.jsx
+        │   ├── Partners.jsx
+        │   ├── Pricing.jsx
+        │   ├── Privacy.jsx
         │   ├── Profile.jsx
+        │   ├── ProjectRoom.jsx
+        │   ├── ProjectRooms.jsx
+        │   ├── Rewards.jsx
         │   ├── RoadmapGenerator.jsx
         │   ├── SpotlightCard.jsx
+        │   ├── Support.jsx
+        │   ├── Terms.jsx
         │   └── api/
         │       └── auth/
         │           └── github.js
@@ -348,12 +396,9 @@ Directory structure:
         └── utils/
             ├── geminiAI.js
             ├── ipfsStorage.js
-            ├── Mentora.json
-            ├── mentoraBlockchain.js
             ├── storage.js
             ├── validation.js
-            └── web3storage.js
-
+            └── walletConnection.js
 
 ```
 
@@ -384,8 +429,6 @@ npx hardhat node
 - Vaibhav Kothari - Full Stack Developer
 - Abhigya Krishna - Blockchain Developer
 - Navya Rathore - AI Developer
-- Shreya Tripathi - Frontend Developer
-- Ashika Shrivastava - Extras
 
 ## 🙏 Acknowledgments
 
@@ -396,21 +439,5 @@ npx hardhat node
 
 ## 📞 Contact
 
-- Website: [mentora.com](https://mentora.com)
-- Email: support@mentora.com
-- Twitter: [@mentora](https://twitter.com/mentora)
-- Discord: [Mentora Community](https://discord.gg/mentora)
+- Website: [mentora-rust.vercel.app](https://mentora-rust.vercel.app/)
 
-## 🚀 Roadmap
-
-🔸 Mobile app development
-
-🔸Advanced AI features
-
-🔸Community forums
-
-🔸Live tutoring sessions
-
-🔸Expanded course categories
-
-🔸Enhanced analytics
