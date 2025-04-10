@@ -209,24 +209,27 @@ const CreateCourse = () => {
       // Create course on blockchain
       setUploadStatus('Creating course on blockchain...');
       try {
+        // Ensure all parameters are properly formatted to avoid JSON RPC errors
+        const difficulty = parseInt(formData.difficulty) || 1;
+        const duration = parseInt(formData.duration) || 0;
+        const moduleCount = formData.modules.length;
+        
+        // Convert price to string to ensure proper handling
+        const price = formData.price.toString();
+        
         const tx = await client.createCourse(
           formData.title,
           formData.description,
           formData.category,
           thumbnailIpfsHash,
           contentIpfsHash,
-          formData.difficulty,
-          formData.duration,
-          formData.price,
-          formData.modules.length
+          difficulty,
+          duration,
+          price,
+          moduleCount
         );
         
-        console.log('Transaction sent:', tx);
         setUploadStatus('Waiting for transaction confirmation...');
-        
-        // Wait for transaction to be mined
-        const receipt = await tx.wait();
-        console.log('Transaction confirmed:', receipt);
         
         setUploadProgress(100);
         setUploadStatus('Course created successfully!');

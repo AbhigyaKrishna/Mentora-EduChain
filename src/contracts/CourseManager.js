@@ -150,7 +150,7 @@ class CourseManager extends BaseContract {
    * @returns {Promise<object>} Course information
    */
   async getCourseInfo(courseId) {
-    const courseInfo = this.call('getCourseInfo', [courseId]);
+    const courseInfo = await this.call('getCourseInfo', [courseId]);
     return {
       id: parseInt(courseInfo.id),
       title: courseInfo.title,
@@ -168,7 +168,15 @@ class CourseManager extends BaseContract {
    * @returns {Promise<object>} Course statistics
    */
   async getCourseStats(courseId) {
-    return this.call('getCourseStats', [courseId]);
+    const stats = await this.call('getCourseStats', [courseId]);
+    return {
+      creator: stats.creator,
+      isActive: stats.isActive,
+      price: this.web3.utils.fromWei(stats.price, 'ether'),
+      totalSales: parseInt(stats.totalSales),
+      moduleCount: parseInt(stats.moduleCount),
+      enrolledUsers: parseInt(stats.enrolledUsers)
+    };
   }
 
   /**

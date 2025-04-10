@@ -64,7 +64,7 @@ class BaseContract {
       } catch (gasError) {
         console.warn('Gas estimation failed:', gasError.message);
         // Fallback to a higher gas limit if estimation fails
-        gas = options.gas || 3000000; // Default higher gas limit
+        gas = options.gas || 300000000000; // Default higher gas limit
       }
       
       let gasPrice;
@@ -73,7 +73,7 @@ class BaseContract {
       } catch (gasPriceError) {
         console.warn('Gas price retrieval failed:', gasPriceError.message);
         // Fallback to a reasonable gas price
-        gasPrice = options.gasPrice || '50000000000'; // 50 Gwei
+        gasPrice = options.gasPrice || '50000000000000000'; // 50 Gwei
       }
       
       const value = options.value || '0';
