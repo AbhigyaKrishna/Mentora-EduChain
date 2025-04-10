@@ -39,7 +39,7 @@ import Pricing from './pages/Pricing';
 import Enterprise from './pages/Enterprise';
 import Partners from './pages/Partners';
 import AffiliateProgram from './pages/AffiliateProgram';
-
+import BecomeInstructor from './pages/BecomeInstructor';
 // OCConnect configuration
 const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',
@@ -154,6 +154,7 @@ function App() {
                   <Route path="enterprise" element={<Enterprise />} />
                   <Route path="partners" element={<Partners />} />
                   <Route path="affiliates" element={<AffiliateProgram />} />
+                  <Route path="teach" element={<BecomeInstructor />} />
                   <Route path="*" element={<NotFound />} />
                   <Route
                     path="/redirect"
