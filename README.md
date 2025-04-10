@@ -10,7 +10,7 @@
 
 </div>
 
-## 🏆 Hackaccino Hackathon Project
+## 🏆 EDUChain Hackathon Semester 3 Project
 
 Mentora is an innovative Web3 education platform that combines blockchain technology with AI-powered learning assistance to create a next-generation learning experience. Built during EDU Chain Hackathon: Semester 3 , our platform aims to revolutionize how people learn and interact with Web3 technologies.
 
