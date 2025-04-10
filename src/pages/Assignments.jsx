@@ -3,11 +3,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaPlus, FaSpinner, FaCheck, FaTasks, FaCode, FaChevronDown } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
+<<<<<<< HEAD
 import { useAssignmentManager } from '../hooks/useAssignmentManager';
 
 const Assignments = () => {
   const { theme } = useTheme();
   const { getClient } = useAssignmentManager();
+=======
+import { useContract } from '../hooks/useContract';
+import { useAccount } from 'wagmi';
+
+const Assignments = () => {
+  const { theme } = useTheme();
+  const { address } = useAccount();
+  const { getClient } = useContract('assignment');
+>>>>>>> 56e3425f222b59f132d3b73bc71742f04c6f64b7
   const navigate = useNavigate();
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);

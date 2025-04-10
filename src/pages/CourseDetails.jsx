@@ -3,16 +3,16 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaStar, FaClock, FaChalkboardTeacher, FaGraduationCap, FaPlay, FaCheck, FaSpinner, FaWallet, FaEthereum } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
-import { useMentoraContract } from '../hooks/useMentoraContract';
 import ipfsService from '../utils/ipfsStorage';
 import { toast } from 'react-hot-toast';
 import Web3 from 'web3';
 import { useAccount, useBalance } from 'wagmi';
+import { useContract } from '../hooks/useContract';
 
 const CourseDetails = () => {
   const { id } = useParams();
   const { theme } = useTheme();
-  const { getClient } = useMentoraContract();
+  const { getClient } = useContract('course');
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

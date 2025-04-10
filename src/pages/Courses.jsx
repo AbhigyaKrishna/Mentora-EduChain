@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaStar, FaUsers, FaClock, FaFilter, FaBook, FaChalkboardTeacher, FaGraduationCap, FaCode, FaTimes, FaEthereum, FaCertificate, FaWallet, FaCheck, FaSpinner } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
-import { useMentoraContract } from '../hooks/useMentoraContract';
+import { useContract } from '../hooks/useContract';
 import ipfsService from '../utils/ipfsStorage';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
@@ -280,7 +280,7 @@ const BuyCourseButton = ({ course }) => {
   const { data: balance } = useBalance({ address });
   const [purchasing, setPurchasing] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const { getClient } = useMentoraContract();
+  const { getClient } = useContract('course');
 
   // Check if user is already enrolled
   useEffect(() => {
@@ -430,7 +430,7 @@ const BuyCourseButton = ({ course }) => {
 
 const Courses = () => {
   const { theme } = useTheme();
-  const { getClient } = useMentoraContract();
+  const { getClient } = useContract('course');
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
