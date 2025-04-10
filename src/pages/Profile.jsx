@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCertificate, FaBell, FaBars, FaGraduationCap, FaEthereum } from 'react-icons/fa';
-import { User, LogOut, Award, Settings, Wallet, ChevronDown, X } from 'lucide-react';
+import { User, Award, Settings, Wallet, X } from 'lucide-react';
 import Aurora from './Aurora';
 import { Link } from 'react-router-dom';
 import Overview from '../components/Profile/OverView';
