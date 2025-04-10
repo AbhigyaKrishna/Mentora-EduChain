@@ -32,6 +32,7 @@ import Instructors from './pages/Instructors';
 import Privacy from './pages/Privacy';
 import Careers from './pages/Careers';
 import Documentation from './pages/Documentation';
+import Blog from './pages/Blog';
 
 // OCConnect configuration
 const ocConnectOpts = {
@@ -140,6 +141,7 @@ function App() {
                   <Route path="privacy" element={<Privacy />} />
                   <Route path="careers" element={<Careers />} />
                   <Route path="docs" element={<Documentation />} />
+                  <Route path="blog" element={<Blog />} />
                   <Route path="*" element={<NotFound />} />
                   <Route
                     path="/redirect"
