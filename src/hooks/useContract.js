@@ -6,7 +6,7 @@ import { useOCAuthState } from './useOCAuthState';
 
 /**
  * Custom hook for managing blockchain clients (CourseManager, AssignmentManager, and MentoraToken)
- * @param {string} contract - Type of client to use ('course', 'assignment', 'mentora', or 'both')
+ * @param {string} contract - Type of client to use ('course', 'assignment', 'token', or 'both')
  * @returns {Object} Client instances and utility functions
  */
 export const useContract = (contract = 'both') => {
@@ -53,7 +53,7 @@ export const useContract = (contract = 'both') => {
   const getClient = useCallback(() => {
     if ((!courseManager && (contract === 'course' || contract === 'both')) ||
         (!assignmentManager && (contract === 'assignment' || contract === 'both')) ||
-        (!mentoraToken && (contract === 'mentora' || contract === 'both'))) {
+        (!mentoraToken && (contract === 'token' || contract === 'both'))) {
       try {
         return initialize();
       } catch (err) {
@@ -64,8 +64,8 @@ export const useContract = (contract = 'both') => {
     
     if (contract === 'course') return courseManager;
     if (contract === 'assignment') return assignmentManager;
-    if (contract === 'mentora') return mentoraToken;
-    return { course: courseManager, assignment: assignmentManager, mentora: mentoraToken };
+    if (contract === 'token') return mentoraToken;
+    return { course: courseManager, assignment: assignmentManager, token: mentoraToken };
   }, [courseManager, assignmentManager, mentoraToken, ethAddress, initialize, contract]);
 
   // Reset the client(s)
@@ -76,7 +76,7 @@ export const useContract = (contract = 'both') => {
     if (contract === 'assignment' || contract === 'both') {
       setAssignmentManager(null);
     }
-    if (contract === 'mentora' || contract === 'both') {
+    if (contract === 'token' || contract === 'both') {
       setMentoraToken(null);
     }
     setIsInitialized(false);
@@ -98,8 +98,8 @@ export const useContract = (contract = 'both') => {
     mentoraToken,
     client: contract === 'course' ? courseManager : 
            contract === 'assignment' ? assignmentManager : 
-           contract === 'mentora' ? mentoraToken : 
-           { course: courseManager, assignment: assignmentManager, mentora: mentoraToken },
+           contract === 'token' ? mentoraToken : 
+           { course: courseManager, assignment: assignmentManager, token: mentoraToken },
     isInitialized,
     error,
     initialize,
