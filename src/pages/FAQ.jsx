@@ -25,9 +25,35 @@ const FAQ = () => {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}
+      className={`min-h-screen relative overflow-hidden ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}
     >
-      <div className="max-w-4xl mx-auto px-4 py-16">
+      <motion.div
+        animate={{
+          x: [0, 100, -100, 0],
+          y: [0, -100, 100, 0],
+          rotate: [0, 180, 360],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+        className={`absolute -top-40 -right-40 w-96 h-96 rounded-full ${darkMode ? 'bg-blue-900/10' : 'bg-blue-100/50'}`}
+      />
+      <motion.div
+        animate={{
+          x: [0, -100, 100, 0],
+          y: [0, 100, -100, 0],
+          rotate: [360, 180, 0],
+        }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+        className={`absolute top-1/3 -left-20 w-64 h-64 rounded-full ${darkMode ? 'bg-purple-900/10' : 'bg-purple-100/50'}`}
+      />
+      <div className="max-w-4xl mx-auto px-4 py-16 relative z-10">
         <h1 className="text-4xl font-bold mb-8">Frequently Asked Questions</h1>
         <div className="space-y-4">
           {faqs.map((faq, index) => (

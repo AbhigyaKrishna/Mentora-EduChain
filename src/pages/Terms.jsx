@@ -7,12 +7,47 @@ const Terms = () => {
 
   return (
     <div className={`min-h-screen ${theme.background} ${theme.text.primary}`}>
-      {/* Animated background circles */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" />
-        <div className="absolute top-0 -right-20 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-32 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" />
-        <div className="absolute -bottom-40 right-40 w-88 h-88 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" />
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{
+            x: [0, 100, -100, 0],
+            y: [0, -100, 100, 0],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute -top-40 -right-40 w-96 h-96 rounded-full ${theme.background === 'bg-white' ? 'bg-blue-100/50' : 'bg-blue-900/10'}`}
+        />
+        <motion.div 
+          animate={{
+            x: [0, -100, 100, 0],
+            y: [0, 100, -100, 0],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute top-1/3 -left-20 w-64 h-64 rounded-full ${theme.background === 'bg-white' ? 'bg-purple-100/50' : 'bg-purple-900/10'}`}
+        />
+        <motion.div 
+          animate={{
+            x: [0, 150, -150, 0],
+            y: [0, -150, 150, 0],
+            rotate: [0, -180, -360],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className={`absolute -bottom-20 right-1/4 w-80 h-80 rounded-full ${theme.background === 'bg-white' ? 'bg-indigo-100/50' : 'bg-indigo-900/10'}`}
+        />
       </div>
 
       {/* Hero Section */}
