@@ -526,8 +526,8 @@ const Courses = () => {
             <div className="mb-4">
               <FaWallet className="text-6xl text-blue-500" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Connect Your Wallet</h2>
             <p className="text-lg text-gray-600 mb-6">
+            <h2 className="text-2xl font-bold mb-2">Connect Your Wallet</h2>
               To access the courses, please connect your wallet.
             </p>
             <button
