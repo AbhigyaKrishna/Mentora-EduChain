@@ -34,6 +34,7 @@ import Careers from './pages/Careers';
 import Documentation from './pages/Documentation';
 import Blog from './pages/Blog';
 import Support from './pages/Support';
+import Community from './pages/Community';
 
 // OCConnect configuration
 const ocConnectOpts = {
@@ -144,6 +145,7 @@ function App() {
                   <Route path="docs" element={<Documentation />} />
                   <Route path="blog" element={<Blog />} />
                   <Route path="support" element={<Support />} />
+                  <Route path="community" element={<Community />} />
                   <Route path="*" element={<NotFound />} />
                   <Route
                     path="/redirect"
