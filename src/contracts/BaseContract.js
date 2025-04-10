@@ -17,7 +17,7 @@ class BaseContract {
     this.contractABI = abi;
     this.contractAddress = contractAddress;
     this.contract = new this.web3.eth.Contract(this.contractABI, this.contractAddress);
-    this.defaultAccount = this.web3.eth.defaultAccount;
+    this.defaultAccount = provider.selectedAddress;
     
     if (privateKey) {
       this.account = this.web3.eth.accounts.privateKeyToAccount(privateKey);

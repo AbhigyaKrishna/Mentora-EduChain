@@ -18,7 +18,7 @@ export const useContract = (contract = 'both') => {
   const { ethAddress } = useOCAuthState();
 
   // Initialize the clients
-  const initialize = useCallback((provider = window.ethereum, account = ethAddress ? ethAddress : window.ethereum?.selectedAddress) => {
+  const initialize = useCallback((provider = window.ethereum) => {
     try {
       if (isInitialized) return;
 
