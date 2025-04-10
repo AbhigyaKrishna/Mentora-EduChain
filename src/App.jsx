@@ -27,7 +27,7 @@ import { Navigate } from 'react-router-dom';
 import Rewards from './pages/Rewards';
 import Certificates from './pages/Certificates';
 import CoursePage from './pages/CoursePage';
-
+import { CoinsProvider } from './context/CoinsContext';
 
 // OCConnect configuration
 const ocConnectOpts = {
@@ -107,6 +107,7 @@ function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <OCConnect opts={ocConnectOpts} sandboxMode={true}>
+          <CoinsProvider>
           <ThemeProvider>
             <Router>
               <Routes>
@@ -148,6 +149,7 @@ function App() {
               </Routes>
             </Router>
           </ThemeProvider>
+          </CoinsProvider>
         </OCConnect>
       </QueryClientProvider>
     </WagmiProvider>
