@@ -13,6 +13,7 @@ const CreateCourse = () => {
   const [error, setError] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState('');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -126,6 +127,7 @@ const CreateCourse = () => {
     setLoading(true);
     setError(null);
     setUploadProgress(0);
+    setUploadStatus('Preparing upload...');
 
     try {
       // Validate form data
@@ -133,16 +135,32 @@ const CreateCourse = () => {
         throw new Error('Please fill in all required fields');
       }
 
+      // Initialize contract client
+      setUploadStatus('Initializing contract...');
+      const client = getClient();
+      if (!client) {
+        throw new Error('Failed to initialize contract client. Please check your wallet connection.');
+      }
+
       // Upload thumbnail
+      setUploadStatus('Uploading thumbnail...');
       setUploadProgress(10);
+      if (!formData.thumbnail) {
+        throw new Error('Please upload a course thumbnail');
+      }
       const thumbnailIpfsHash = await handleFileUpload(formData.thumbnail, 'thumbnail');
       setUploadProgress(30);
 
       // Upload intro video
+      setUploadStatus('Uploading intro video...');
+      if (!formData.introVideo) {
+        throw new Error('Please upload an intro video');
+      }
       const introVideoIpfsHash = await handleFileUpload(formData.introVideo, 'video');
       setUploadProgress(50);
 
       // Upload modules and materials
+      setUploadStatus('Uploading course modules...');
       const moduleIpfsHashes = [];
       const moduleTitles = [];
       const materialIpfsHashes = {};
@@ -150,7 +168,15 @@ const CreateCourse = () => {
       for (let i = 0; i < formData.modules.length; i++) {
         const module = formData.modules[i];
         
+        if (!module.title) {
+          throw new Error(`Please enter a title for module ${i + 1}`);
+        }
+        if (!module.video) {
+          throw new Error(`Please upload a video for module ${i + 1}`);
+        }
+
         // Upload module video
+        setUploadStatus(`Uploading module ${i + 1} video...`);
         const videoHash = await handleFileUpload(module.video, 'video');
         moduleIpfsHashes.push(videoHash);
         moduleTitles.push(module.title);
@@ -158,6 +184,7 @@ const CreateCourse = () => {
         // Upload materials for this module
         const materialHashes = [];
         for (const material of module.materials) {
+          setUploadStatus(`Uploading materials for module ${i + 1}...`);
           const materialHash = await handleFileUpload(material, 'material');
           materialHashes.push(materialHash);
         }
@@ -166,6 +193,7 @@ const CreateCourse = () => {
       setUploadProgress(80);
 
       // Create course content metadata
+      setUploadStatus('Creating course metadata...');
       const courseContent = {
         introVideoIpfsHash,
         moduleIpfsHashes,
@@ -179,25 +207,38 @@ const CreateCourse = () => {
       setUploadProgress(90);
 
       // Create course on blockchain
-      const client = getClient();
-      
-      await client.createCourse(
-        formData.title,
-        formData.description,
-        formData.category,
-        thumbnailIpfsHash,
-        contentIpfsHash,
-        formData.difficulty,
-        formData.duration,
-        formData.price,
-        formData.modules.length
-      );
-      
-      setUploadProgress(100);
-      navigate('/courses');
+      setUploadStatus('Creating course on blockchain...');
+      try {
+        const tx = await client.createCourse(
+          formData.title,
+          formData.description,
+          formData.category,
+          thumbnailIpfsHash,
+          contentIpfsHash,
+          formData.difficulty,
+          formData.duration,
+          formData.price,
+          formData.modules.length
+        );
+        
+        console.log('Transaction sent:', tx);
+        setUploadStatus('Waiting for transaction confirmation...');
+        
+        // Wait for transaction to be mined
+        const receipt = await tx.wait();
+        console.log('Transaction confirmed:', receipt);
+        
+        setUploadProgress(100);
+        setUploadStatus('Course created successfully!');
+        navigate('/courses');
+      } catch (txError) {
+        console.error('Transaction error:', txError);
+        throw new Error(`Failed to create course on blockchain: ${txError.message}`);
+      }
     } catch (err) {
       console.error('Error creating course:', err);
       setError(err.message);
+      setUploadStatus('Upload failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -546,20 +587,16 @@ const CreateCourse = () => {
             </div>
 
             {/* Upload Progress */}
-            {loading && uploadProgress > 0 && (
+            {loading && (
               <div className="w-full">
                 <div className="flex justify-between mb-1">
-                  <span className="text-sm">Upload Progress</span>
-                  <span className="text-sm">
-                    {uploadProgress > 100 ? 100 : Math.round(uploadProgress)}%
-                  </span>
+                  <span className="text-sm">{uploadStatus}</span>
+                  <span className="text-sm">{Math.min(Math.round(uploadProgress), 100)}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                   <div
                     className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-                    style={{ 
-                      width: `${uploadProgress > 100 ? 100 : Math.round(uploadProgress)}%`
-                    }}
+                    style={{ width: `${Math.min(uploadProgress, 100)}%` }}
                   />
                 </div>
               </div>
