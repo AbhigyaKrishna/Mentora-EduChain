@@ -608,23 +608,23 @@ function Profile() {
                     <span>Overview</span>
                   </button>
 
-                <button
-                  onClick={() => { setActiveTab('certificates'); setShowMobileMenu(false); }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                    }`}
-                >
-                  <FaCertificate className="w-5 h-5" />
-                  <span>Certificates</span>
-                </button>
+                  <button
+                    onClick={() => { setActiveTab('certificates'); setShowMobileMenu(false); }}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                      }`}
+                  >
+                    <FaCertificate className="w-5 h-5" />
+                    <span>Certificates</span>
+                  </button>
 
-                <button
-                  onClick={() => { setActiveTab('achievements'); setShowMobileMenu(false); }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                    }`}
-                >
-                  <Award className="w-5 h-5" />
-                  <span>Achievements</span>
-                </button>
+                  <button
+                    onClick={() => { setActiveTab('achievements'); setShowMobileMenu(false); }}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                      }`}
+                  >
+                    <Award className="w-5 h-5" />
+                    <span>Achievements</span>
+                  </button>
 
                   <button
                     onClick={() => { setActiveTab('settings'); setShowMobileMenu(false); }}
@@ -635,18 +635,19 @@ function Profile() {
                     <span>Settings</span>
                   </button>
 
-                <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
-                  <FaGraduationCap className="w-5 h-5" />
-                  <span>Go to Course</span>
-                </Link>
-              </nav>
+                  <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
+                    <FaGraduationCap className="w-5 h-5" />
+                    <span>Go to Course</span>
+                  </Link>
 
-              <div className="pt-4 mt-4 border-t border-gray-700">
-                <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
-                  <LogOut className="w-5 h-5" />
-                  <span>Sign Out</span>
-                </button>
-              </div>
+                  <div className="pt-4 mt-4 border-t border-gray-700">
+                    <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
+                      <LogOut className="w-5 h-5" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </nav>
+              )}
             </div>
           </motion.div>
         )}
@@ -689,7 +690,7 @@ function Profile() {
                               {activeWallet === 'coinbase' && <FaEthereum className="text-blue-600" />}
                               {!activeWallet && <FaEthereum className="text-gray-400" />}
                               <span className="text-sm">{formatAddress(walletAddress)}</span>
-                    </div>
+                            </div>
                             {/* <button
                               onClick={disconnectWallet}
                               className="w-full py-1 px-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300 transition-colors"
@@ -698,7 +699,7 @@ function Profile() {
                             </button> */}
                           </div>
                         )}
-                        </div>
+                      </div>
                     </div>
 
                 <div className="space-y-2 pt-4 border-t border-gray-700">
@@ -729,14 +730,14 @@ function Profile() {
                     <span>Achievements</span>
                   </button>
 
-                      <button
-                        onClick={() => setActiveTab('settings')}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                          }`}
-                      >
-                        <Settings className="w-5 h-5" />
-                        <span>Settings</span>
-                      </button>
+                  <button
+                    onClick={() => setActiveTab('settings')}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                      }`}
+                  >
+                    <Settings className="w-5 h-5" />
+                    <span>Settings</span>
+                  </button>
 
                   <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
                     <FaGraduationCap className="w-5 h-5" />
@@ -744,16 +745,14 @@ function Profile() {
                   </Link>
                 </div>
 
-                    {/* <div className="pt-4 mt-4 border-t border-gray-700">
-                      <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
-                        <LogOut className="w-5 h-5" />
-                        <span>Sign Out</span>
-                      </button>
-                    </div> */}
-                  </>
-                )}
-                  </div>
+                <div className="pt-4 mt-4 border-t border-gray-700">
+                  <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
+                    <LogOut className="w-5 h-5" />
+                    <span>Sign Out</span>
+                  </button>
                 </div>
+              </div>
+            </div>
           </div>
 
           {/* Main Content */}
