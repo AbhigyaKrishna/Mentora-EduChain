@@ -29,7 +29,7 @@ import Certificates from './pages/Certificates';
 import CoursePage from './pages/CoursePage';
 import { CoinsProvider } from './context/CoinsContext';
 import Instructors from './pages/Instructors';
-
+import Privacy from './pages/Privacy';
 // OCConnect configuration
 const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',
@@ -136,6 +136,7 @@ function App() {
                   <Route path="course/:courseId" element={<CoursePage />} />
                   <Route path="*" element={<NotFound />} />
                   <Route path="instructors" element={<Instructors />} />
+                  <Route path="privacy" element={<Privacy />} />
                   <Route
                     path="/redirect"
                     element={
