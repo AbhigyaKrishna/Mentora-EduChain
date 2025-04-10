@@ -223,7 +223,7 @@ class CourseManager extends BaseContract {
    * @returns {Promise<object>} Transaction receipt
    */
   async purchaseCourse(courseId, options = {}) {
-    const course = await this.getCourse(courseId);
+    const course = await await this.call('getCourseStats', [courseId]);
     
     // Ensure the value is set to at least the course price
     if (!options.value || options.value < course.price) {
