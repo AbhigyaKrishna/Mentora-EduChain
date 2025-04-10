@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCertificate, FaBell, FaBars, FaGraduationCap, FaCoins, FaEthereum } from 'react-icons/fa';
-import { User, Award, Settings, Wallet, X } from 'lucide-react';
+import { User, LogOut, Award, Settings, Wallet, ChevronDown, X } from 'lucide-react';
 import Aurora from './Aurora';
 import { Link, useNavigate } from 'react-router-dom';
 import Overview from '../components/Profile/OverView';
@@ -9,8 +9,6 @@ import Certificates from '../components/Profile/Certificates';
 import Achievements from '../components/Profile/Achievements';
 import SettingsComponent from '../components/Profile/Settings';
 import { useWalletConnection } from '../hooks/useWalletConnection';
-
-import Rewards from './Rewards';
 // Skeleton components for loading states
 const ProfileSkeleton = () => (
   <div className="animate-pulse">
@@ -33,15 +31,15 @@ const ContentSkeleton = () => (
   <div className="animate-pulse">
     <div className="h-8 bg-gray-700 rounded w-3/4 mb-4"></div>
     <div className="h-4 bg-gray-700 rounded w-1/2 mb-8"></div>
-
+    
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       {[1, 2, 3, 4].map((i) => (
         <div key={i} className="h-40 bg-gray-700 rounded"></div>
       ))}
     </div>
-
+    
     <div className="h-64 bg-gray-700 rounded mb-8"></div>
-
+    
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[1, 2, 3].map((i) => (
         <div key={i} className="h-32 bg-gray-700 rounded"></div>
@@ -147,7 +145,7 @@ function Profile() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState('');
   const [showWalletModal, setShowWalletModal] = useState(false);
-  const navigate = useNavigate();
+  
   // Loading states
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState({
@@ -162,14 +160,14 @@ function Profile() {
     { id: 3, text: "Course 'Advanced Smart Contracts' has been updated", isNew: false, time: "2 days ago" },
   ]);
   function WalletComponent() {
-    const {
-      walletAddress,
-      activeWallet,
+    const { 
+      walletAddress, 
+      activeWallet, 
       isConnected,
-      connectWallet,
-      disconnectWallet
+      connectWallet, 
+      disconnectWallet 
     } = useWalletConnection({ notifications: true });
-
+  
     return (
       <div>
         {isConnected ? (
@@ -185,29 +183,29 @@ function Profile() {
       </div>
     );
   }
-
+  
   // Check if MetaMask is installed
   const isMetaMaskInstalled = () => {
     const { ethereum } = window;
     return Boolean(ethereum && ethereum.isMetaMask);
   };
 
-  // Check connection status on component mount and simulate data loading
+  // Check connection status on component mount
   useEffect(() => {
     // Simulate staggered data loading
     setTimeout(() => {
       setIsDataLoaded(prev => ({ ...prev, profile: true }));
     }, 800);
-
+    
     setTimeout(() => {
       setIsDataLoaded(prev => ({ ...prev, certificates: true }));
     }, 1500);
-
+    
     setTimeout(() => {
       setIsDataLoaded(prev => ({ ...prev, achievements: true }));
       setIsLoading(false);
     }, 2200);
-
+    
     const checkConnection = async () => {
       if (isMetaMaskInstalled()) {
         try {
@@ -274,13 +272,13 @@ function Profile() {
           }
           break;
 
-        // case 'walletconnect':
-        //   // In a real implementation, you would use the WalletConnect SDK
-        //   // This is a simplified example
-        //   console.log('WalletConnect would open here');
-        //   // Simulate a connection for demo purposes
-        //   accounts = ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
-        //   break;
+        case 'walletconnect':
+          // In a real implementation, you would use the WalletConnect SDK
+          // This is a simplified example
+          console.log('WalletConnect would open here');
+          // Simulate a connection for demo purposes
+          accounts = ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
+          break;
 
         case 'coinbase':
           // In a real implementation, you would use the Coinbase Wallet SDK
@@ -356,16 +354,16 @@ function Profile() {
       certificates: false,
       achievements: false
     });
-
+    
     // Simulate staggered data loading
     setTimeout(() => {
       setIsDataLoaded(prev => ({ ...prev, profile: true }));
     }, 800);
-
+    
     setTimeout(() => {
       setIsDataLoaded(prev => ({ ...prev, certificates: true }));
     }, 1500);
-
+    
     setTimeout(() => {
       setIsDataLoaded(prev => ({ ...prev, achievements: true }));
       setIsLoading(false);
@@ -550,7 +548,7 @@ function Profile() {
                   <div className="w-20 h-20 rounded-full bg-gray-700 mb-4"></div>
                   <div className="h-5 bg-gray-700 rounded w-36 mb-2"></div>
                   <div className="h-3 bg-gray-700 rounded w-24 mb-3"></div>
-
+                  
                   <div className="w-full h-10 bg-gray-700 rounded mt-3"></div>
                 </div>
               ) : (
@@ -561,7 +559,7 @@ function Profile() {
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
-                  </div>
+                </div>
                   <h2 className="text-lg font-bold">{userData.name}</h2>
                   <div className="text-sm text-gray-400">{userData.role}</div>
 
@@ -580,16 +578,16 @@ function Profile() {
                         <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white mb-2">
                           <FaEthereum className="text-blue-400" />
                           <span className="text-sm">{formatAddress(walletAddress)}</span>
-                        </div>
+                </div>
                         {/* <button
                           onClick={disconnectWallet}
                           className="w-full py-1 px-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300 transition-colors"
                         >
                           Disconnect
                         </button> */}
-                      </div>
+                </div>
                     )}
-                  </div>
+              </div>
                 </div>
               )}
 
@@ -610,23 +608,23 @@ function Profile() {
                     <span>Overview</span>
                   </button>
 
-                  <button
-                    onClick={() => { setActiveTab('certificates'); setShowMobileMenu(false); }}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                      }`}
-                  >
-                    <FaCertificate className="w-5 h-5" />
-                    <span>Certificates</span>
-                  </button>
+                <button
+                  onClick={() => { setActiveTab('certificates'); setShowMobileMenu(false); }}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                    }`}
+                >
+                  <FaCertificate className="w-5 h-5" />
+                  <span>Certificates</span>
+                </button>
 
-                  <button
-                    onClick={() => { setActiveTab('achievements'); setShowMobileMenu(false); }}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                      }`}
-                  >
-                    <Award className="w-5 h-5" />
-                    <span>Achievements</span>
-                  </button>
+                <button
+                  onClick={() => { setActiveTab('achievements'); setShowMobileMenu(false); }}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                    }`}
+                >
+                  <Award className="w-5 h-5" />
+                  <span>Achievements</span>
+                </button>
 
                   <button
                     onClick={() => { setActiveTab('settings'); setShowMobileMenu(false); }}
@@ -636,28 +634,19 @@ function Profile() {
                     <Settings className="w-5 h-5" />
                     <span>Settings</span>
                   </button>
-                  <button
-                    onClick={() => { navigate('/rewards'); setShowMobileMenu(false); }}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'rewards' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                      }`}
-                  >
-                    <FaCoins className="w-5 h-5" />
-                    <span>Rewards</span>
-                  </button>
 
-                  <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
-                    <FaGraduationCap className="w-5 h-5" />
-                    <span>Go to Course</span>
-                  </Link>
-                </nav>
-              )}
+                <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
+                  <FaGraduationCap className="w-5 h-5" />
+                  <span>Go to Course</span>
+                </Link>
+              </nav>
 
-              {/* <div className="pt-4 mt-4 border-t border-gray-700">
+              <div className="pt-4 mt-4 border-t border-gray-700">
                 <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
                   <LogOut className="w-5 h-5" />
                   <span>Sign Out</span>
                 </button>
-              </div> */}
+              </div>
             </div>
           </motion.div>
         )}
@@ -669,21 +658,17 @@ function Profile() {
           <div className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-8">
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-gray-700/50 mb-6">
-                {isLoading ? (
-                  <ProfileSkeleton />
-                ) : (
-                  <>
-                    <div className="flex flex-col items-center mb-6">
-                      <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-blue-500 p-1">
-                        <img
-                          src={userData.profileImage}
-                          alt="Profile"
-                          className="w-full h-full object-cover rounded-full"
-                        />
-                      </div>
-                      <h2 className="text-xl font-bold">{userData.name}</h2>
-                      <div className="text-gray-400 text-sm">{userData.role}</div>
-                      <div className="text-gray-500 text-xs mt-1">Member since {userData.joined}</div>
+                <div className="flex flex-col items-center mb-6">
+                  <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-blue-500 p-1">
+                    <img
+                      src={userData.profileImage}
+                      alt="Profile"
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                  <h2 className="text-xl font-bold">{userData.name}</h2>
+                  <div className="text-gray-400 text-sm">{userData.role}</div>
+                  <div className="text-gray-500 text-xs mt-1">Member since {userData.joined}</div>
 
                       {/* Wallet Connect Button */}
                       <div className="mt-4 w-full">
@@ -704,7 +689,7 @@ function Profile() {
                               {activeWallet === 'coinbase' && <FaEthereum className="text-blue-600" />}
                               {!activeWallet && <FaEthereum className="text-gray-400" />}
                               <span className="text-sm">{formatAddress(walletAddress)}</span>
-                            </div>
+                    </div>
                             {/* <button
                               onClick={disconnectWallet}
                               className="w-full py-1 px-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300 transition-colors"
@@ -713,36 +698,36 @@ function Profile() {
                             </button> */}
                           </div>
                         )}
-                      </div>
+                        </div>
                     </div>
 
-                    <div className="space-y-2 pt-4 border-t border-gray-700">
-                      <button
-                        onClick={() => setActiveTab('overview')}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                          }`}
-                      >
-                        <User className="w-5 h-5" />
-                        <span>Overview</span>
-                      </button>
+                <div className="space-y-2 pt-4 border-t border-gray-700">
+                  <button
+                    onClick={() => setActiveTab('overview')}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                      }`}
+                  >
+                    <User className="w-5 h-5" />
+                    <span>Overview</span>
+                  </button>
 
-                      <button
-                        onClick={() => setActiveTab('certificates')}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                          }`}
-                      >
-                        <FaCertificate className="w-5 h-5" />
-                        <span>Certificates</span>
-                      </button>
+                  <button
+                    onClick={() => setActiveTab('certificates')}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                      }`}
+                  >
+                    <FaCertificate className="w-5 h-5" />
+                    <span>Certificates</span>
+                  </button>
 
-                      <button
-                        onClick={() => setActiveTab('achievements')}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                          }`}
-                      >
-                        <Award className="w-5 h-5" />
-                        <span>Achievements</span>
-                      </button>
+                  <button
+                    onClick={() => setActiveTab('achievements')}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                      }`}
+                  >
+                    <Award className="w-5 h-5" />
+                    <span>Achievements</span>
+                  </button>
 
                       <button
                         onClick={() => setActiveTab('settings')}
@@ -752,20 +737,12 @@ function Profile() {
                         <Settings className="w-5 h-5" />
                         <span>Settings</span>
                       </button>
-                      <button
-                        onClick={() => navigate('/rewards')}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'rewards' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                          }`}
-                      >
-                        <FaCoins className="w-5 h-5" />
-                        <span>Rewards</span>
-                      </button>
 
-                      <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
-                        <FaGraduationCap className="w-5 h-5" />
-                        <span>Go to Course</span>
-                      </Link>
-                    </div>
+                  <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
+                    <FaGraduationCap className="w-5 h-5" />
+                    <span>Go to Course</span>
+                  </Link>
+                </div>
 
                     {/* <div className="pt-4 mt-4 border-t border-gray-700">
                       <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
@@ -775,8 +752,8 @@ function Profile() {
                     </div> */}
                   </>
                 )}
-              </div>
-            </div>
+                  </div>
+                </div>
           </div>
 
           {/* Main Content */}
@@ -827,7 +804,6 @@ function Profile() {
                 {activeTab === 'certificates' && <Certificates certificates={certificates} walletAddress={walletAddress} />}
                 {activeTab === 'achievements' && <Achievements badges={badges} />}
                 {activeTab === 'settings' && <SettingsComponent userData={userData} walletAddress={walletAddress} />}
-                {activeTab === 'rewards' && <Rewards userData={userData} walletAddress={walletAddress} />}
               </>
             )}
           </div>

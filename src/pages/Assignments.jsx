@@ -1,8 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaPlus, FaSpinner, FaCheck, FaTasks, FaCode, FaChevronDown, FaWallet } from 'react-icons/fa';
+import { FaPlus, FaSpinner, FaCheck, FaTasks, FaCode, FaChevronDown } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
+<<<<<<< HEAD
+import { useAssignmentManager } from '../hooks/useAssignmentManager';
+
+const Assignments = () => {
+  const { theme } = useTheme();
+  const { getClient } = useAssignmentManager();
+=======
 import { useContract } from '../hooks/useContract';
 import { useAccount } from 'wagmi';
 
@@ -10,6 +17,7 @@ const Assignments = () => {
   const { theme } = useTheme();
   const { address } = useAccount();
   const { getClient } = useContract('assignment');
+>>>>>>> 56e3425f222b59f132d3b73bc71742f04c6f64b7
   const navigate = useNavigate();
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -82,33 +90,7 @@ const Assignments = () => {
       </div>
     );
   }
-  if (!address) {
-    return (
-      <div className={`min-h-screen ${theme.background} ${theme.text.primary} flex items-center justify-center`}>
-        <div className="max-w-md mx-auto text-center bg-white shadow-lg rounded-lg p-8 relative overflow-hidden">
-          {/* Decorative Background Elements */}
-          <div className="absolute top-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full -mt-24 -ml-24"></div>
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full -mb-32 -mr-32"></div>
 
-          <div className="relative z-10 flex flex-col items-center">
-            <div className="mb-4">
-              <FaWallet className="text-6xl text-blue-500" />
-            </div>
-            <p className="text-lg text-gray-600 mb-6">
-            <h2 className="text-2xl font-bold mb-2">Connect Your Wallet</h2>
-              To access the assignments, please connect your wallet.
-            </p>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all shadow-lg"
-            >
-              Connect Wallet
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className={`min-h-screen ${theme.background} ${theme.text.primary} py-12 px-4 sm:px-6 lg:px-8`}>
       <div className="max-w-7xl mx-auto">

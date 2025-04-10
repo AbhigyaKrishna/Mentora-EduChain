@@ -103,15 +103,15 @@ const CreateCourse = () => {
       let cid;
       if (type === 'thumbnail') {
         cid = await ipfsService.uploadImage(file, (progress) => {
-          setUploadProgress(prev => Math.min(prev + progress / 3, 100));
+          setUploadProgress(Math.round(progress));
         });
       } else if (type === 'video') {
         cid = await ipfsService.uploadVideo(file, (progress) => {
-          setUploadProgress(prev => Math.min(prev + progress / 3, 100));
+          setUploadProgress(Math.round(progress));
         });
       } else if (type === 'material') {
         cid = await ipfsService.uploadFile(file, (progress) => {
-          setUploadProgress(prev => Math.min(prev + progress / (3 * formData.modules.length), 100));
+          setUploadProgress(Math.round(progress));
         });
       }
       return cid;
@@ -134,10 +134,13 @@ const CreateCourse = () => {
       }
 
       // Upload thumbnail
+      setUploadProgress(10);
       const thumbnailIpfsHash = await handleFileUpload(formData.thumbnail, 'thumbnail');
+      setUploadProgress(30);
 
       // Upload intro video
       const introVideoIpfsHash = await handleFileUpload(formData.introVideo, 'video');
+      setUploadProgress(50);
 
       // Upload modules and materials
       const moduleIpfsHashes = [];
@@ -160,6 +163,7 @@ const CreateCourse = () => {
         }
         materialIpfsHashes[i] = materialHashes;
       }
+      setUploadProgress(80);
 
       // Create course content metadata
       const courseContent = {
@@ -172,6 +176,7 @@ const CreateCourse = () => {
 
       // Upload course content to IPFS
       const contentIpfsHash = await ipfsService.uploadJSON(courseContent);
+      setUploadProgress(90);
 
       // Create course on blockchain
       const client = getClient();
@@ -231,7 +236,7 @@ const CreateCourse = () => {
 
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Price (EDU) <span className="text-red-500">*</span>
+                  Price (ETH) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -522,38 +527,44 @@ const CreateCourse = () => {
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r ${theme.primary} hover:shadow-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              {loading ? (
-                <span className="flex items-center">
-                  <FaSpinner className="animate-spin mr-2" />
-                  Creating Course...
-                </span>
-              ) : (
-                'Create Course'
-              )}
-            </button>
-          </div>
-
-          {/* Upload Progress */}
-          {loading && (
-            <div className="mt-4">
-              <div className="flex justify-between mb-1">
-                <span className="text-sm">Upload Progress</span>
-                <span className="text-sm">{uploadProgress}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div
-                  className="bg-blue-600 h-2.5 rounded-full"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r ${theme.primary} hover:shadow-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {loading ? (
+                  <span className="flex items-center">
+                    <FaSpinner className="animate-spin mr-2" />
+                    Creating Course...
+                  </span>
+                ) : (
+                  'Create Course'
+                )}
+              </button>
             </div>
-          )}
+
+            {/* Upload Progress */}
+            {loading && uploadProgress > 0 && (
+              <div className="w-full">
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm">Upload Progress</span>
+                  <span className="text-sm">
+                    {uploadProgress > 100 ? 100 : Math.round(uploadProgress)}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                    style={{ 
+                      width: `${uploadProgress > 100 ? 100 : Math.round(uploadProgress)}%`
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </form>
       </div>
     </div>
