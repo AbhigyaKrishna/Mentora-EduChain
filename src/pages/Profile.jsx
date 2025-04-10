@@ -8,6 +8,45 @@ import Overview from '../components/Profile/OverView';
 import Certificates from '../components/Profile/Certificates';
 import Achievements from '../components/Profile/Achievements';
 import SettingsComponent from '../components/Profile/Settings';
+import { useWalletConnection } from '../hooks/useWalletConnection';
+// Skeleton components for loading states
+const ProfileSkeleton = () => (
+  <div className="animate-pulse">
+    <div className="flex flex-col items-center mb-6">
+      <div className="w-24 h-24 rounded-full bg-gray-700 mb-4"></div>
+      <div className="h-6 bg-gray-700 rounded w-36 mb-2"></div>
+      <div className="h-4 bg-gray-700 rounded w-24 mb-1"></div>
+      <div className="h-3 bg-gray-700 rounded w-32 mt-1 mb-4"></div>
+      <div className="h-10 bg-gray-700 rounded w-full"></div>
+    </div>
+    <div className="space-y-2 pt-4 border-t border-gray-700">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="h-12 bg-gray-700 rounded w-full"></div>
+      ))}
+    </div>
+  </div>
+);
+
+const ContentSkeleton = () => (
+  <div className="animate-pulse">
+    <div className="h-8 bg-gray-700 rounded w-3/4 mb-4"></div>
+    <div className="h-4 bg-gray-700 rounded w-1/2 mb-8"></div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="h-40 bg-gray-700 rounded"></div>
+      ))}
+    </div>
+    
+    <div className="h-64 bg-gray-700 rounded mb-8"></div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-32 bg-gray-700 rounded"></div>
+      ))}
+    </div>
+  </div>
+);
 
 // Mock user data
 const userData = {
@@ -37,21 +76,21 @@ const userData = {
 };
 
 const certificates = [
-  {
-    tokenId: "NFT-001",
-    courseId: "CERT-BF-101",
+        {
+          tokenId: "NFT-001",
+          courseId: "CERT-BF-101",
     courseName: "Blockchain Fundamentals",
     studentName: "Vaibhav Kothari",
-    completionDate: "2024-03-15",
+          completionDate: "2024-03-15",
     score: "95",
     image: "./block.png"
-  },
-  {
-    tokenId: "NFT-002",
-    courseId: "CERT-SC-201",
+        },
+        {
+          tokenId: "NFT-002",
+          courseId: "CERT-SC-201",
     courseName: "Web Development with React",
     studentName: "Vaibhav Kothari",
-    completionDate: "2024-03-20",
+          completionDate: "2024-03-20",
     score: "88",
     image: "./react.png"
   }
@@ -106,21 +145,67 @@ function Profile() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState('');
   const [showWalletModal, setShowWalletModal] = useState(false);
+  
+  // Loading states
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoaded, setIsDataLoaded] = useState({
+    profile: false,
+    certificates: false,
+    achievements: false
+  });
 
   const [notifications, setNotifications] = useState([
     { id: 1, text: "New course recommendation available", isNew: true, time: "2 hours ago" },
     { id: 2, text: "You've earned a new badge: 'Streak Master'", isNew: true, time: "Yesterday" },
     { id: 3, text: "Course 'Advanced Smart Contracts' has been updated", isNew: false, time: "2 days ago" },
   ]);
-
+  function WalletComponent() {
+    const { 
+      walletAddress, 
+      activeWallet, 
+      isConnected,
+      connectWallet, 
+      disconnectWallet 
+    } = useWalletConnection({ notifications: true });
+  
+    return (
+      <div>
+        {isConnected ? (
+          <>
+            <p>Connected with {activeWallet}: {walletAddress}</p>
+            {/* <button onClick={disconnectWallet}>Disconnect</button> */}
+          </>
+        ) : (
+          <button onClick={() => connectWallet('metamask')}>
+            Connect MetaMask
+          </button>
+        )}
+      </div>
+    );
+  }
+  
   // Check if MetaMask is installed
   const isMetaMaskInstalled = () => {
     const { ethereum } = window;
     return Boolean(ethereum && ethereum.isMetaMask);
   };
 
-  // Check connection status on component mount
+  // Check connection status on component mount and simulate data loading
   useEffect(() => {
+    // Simulate staggered data loading
+    setTimeout(() => {
+      setIsDataLoaded(prev => ({ ...prev, profile: true }));
+    }, 800);
+    
+    setTimeout(() => {
+      setIsDataLoaded(prev => ({ ...prev, certificates: true }));
+    }, 1500);
+    
+    setTimeout(() => {
+      setIsDataLoaded(prev => ({ ...prev, achievements: true }));
+      setIsLoading(false);
+    }, 2200);
+    
     const checkConnection = async () => {
       if (isMetaMaskInstalled()) {
         try {
@@ -187,13 +272,13 @@ function Profile() {
           }
           break;
 
-        case 'walletconnect':
-          // In a real implementation, you would use the WalletConnect SDK
-          // This is a simplified example
-          console.log('WalletConnect would open here');
-          // Simulate a connection for demo purposes
-          accounts = ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
-          break;
+        // case 'walletconnect':
+        //   // In a real implementation, you would use the WalletConnect SDK
+        //   // This is a simplified example
+        //   console.log('WalletConnect would open here');
+        //   // Simulate a connection for demo purposes
+        //   accounts = ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
+        //   break;
 
         case 'coinbase':
           // In a real implementation, you would use the Coinbase Wallet SDK
@@ -261,16 +346,40 @@ function Profile() {
     setNotifications(notifications.map(n => ({ ...n, isNew: false })));
   };
 
+  // Function to reload data (simulates refresh)
+  const refreshData = () => {
+    setIsLoading(true);
+    setIsDataLoaded({
+      profile: false,
+      certificates: false,
+      achievements: false
+    });
+    
+    // Simulate staggered data loading
+    setTimeout(() => {
+      setIsDataLoaded(prev => ({ ...prev, profile: true }));
+    }, 800);
+    
+    setTimeout(() => {
+      setIsDataLoaded(prev => ({ ...prev, certificates: true }));
+    }, 1500);
+    
+    setTimeout(() => {
+      setIsDataLoaded(prev => ({ ...prev, achievements: true }));
+      setIsLoading(false);
+    }, 2200);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
       {/* Background Aurora Effect */}
       <div className="fixed inset-0 z-0 opacity-30">
-        <Aurora
-          colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
-          blend={0.5}
+      <Aurora 
+        colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
+        blend={0.5}
           amplitude={2.0}
-          speed={0.5}
-        />
+        speed={0.5}
+      />  
       </div>
 
       {/* Mobile Menu Button */}
@@ -288,9 +397,9 @@ function Profile() {
         {showWalletModal && (
           <>
             {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
               onClick={() => setShowWalletModal(false)}
@@ -339,7 +448,7 @@ function Profile() {
                         </div>
                       </button>
                     ))}
-                  </div>
+        </div>
 
                   {connectionError && (
                     <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
@@ -350,7 +459,7 @@ function Profile() {
                   <div className="mt-4 text-center text-xs text-gray-500">
                     By connecting a wallet, you agree to our Terms of Service and Privacy Policy
                   </div>
-                </div>
+            </div>
               </div>
             </motion.div>
           </>
@@ -395,18 +504,18 @@ function Profile() {
                     <div className="flex items-start gap-3">
                       <div className={`p-2 rounded-full ${notification.isNew ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-700 text-gray-400'}`}>
                         <FaBell className="text-sm" />
-                      </div>
+              </div>
                       <div>
                         <p className="text-sm">{notification.text}</p>
                         <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
-                      </div>
-                    </div>
-                  </div>
+              </div>
+              </div>
+              </div>
                 ))
               ) : (
                 <div className="p-6 text-center text-gray-400">
                   <p>No notifications</p>
-                </div>
+              </div>
               )}
             </div>
           </motion.div>
@@ -434,118 +543,28 @@ function Profile() {
             </div>
 
             <div className="p-4">
-              <div className="flex flex-col items-center p-6 mb-6">
-                <div className="w-20 h-20 rounded-full overflow-hidden mb-4">
-                  <img
-                    src={userData.profileImage}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
+              {isLoading ? (
+                <div className="flex flex-col items-center p-6 mb-6 animate-pulse">
+                  <div className="w-20 h-20 rounded-full bg-gray-700 mb-4"></div>
+                  <div className="h-5 bg-gray-700 rounded w-36 mb-2"></div>
+                  <div className="h-3 bg-gray-700 rounded w-24 mb-3"></div>
+                  
+                  <div className="w-full h-10 bg-gray-700 rounded mt-3"></div>
                 </div>
-                <h2 className="text-lg font-bold">{userData.name}</h2>
-                <div className="text-sm text-gray-400">{userData.role}</div>
-
-                {/* Wallet Display/Connect for Mobile */}
-                <div className="mt-3 w-full">
-                  {!walletAddress ? (
-                    <button
-                      onClick={() => setShowWalletModal(true)}
-                      className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-medium transition-colors"
-                    >
-                      <Wallet size={18} />
-                      <span>Connect Wallet</span>
-                    </button>
-                  ) : (
-                    <div className="w-full">
-                      <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white mb-2">
-                        <FaEthereum className="text-blue-400" />
-                        <span className="text-sm">{formatAddress(walletAddress)}</span>
-                      </div>
-                      <button
-                        onClick={disconnectWallet}
-                        className="w-full py-1 px-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300 transition-colors"
-                      >
-                        Disconnect
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <nav className="space-y-1">
-                <button
-                  onClick={() => { setActiveTab('overview'); setShowMobileMenu(false); }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                    }`}
-                >
-                  <User className="w-5 h-5" />
-                  <span>Overview</span>
-                </button>
-
-                <button
-                  onClick={() => { setActiveTab('certificates'); setShowMobileMenu(false); }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                    }`}
-                >
-                  <FaCertificate className="w-5 h-5" />
-                  <span>Certificates</span>
-                </button>
-
-                <button
-                  onClick={() => { setActiveTab('achievements'); setShowMobileMenu(false); }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                    }`}
-                >
-                  <Award className="w-5 h-5" />
-                  <span>Achievements</span>
-                </button>
-
-                <button
-                  onClick={() => { setActiveTab('settings'); setShowMobileMenu(false); }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
-                    }`}
-                >
-                  <Settings className="w-5 h-5" />
-                  <span>Settings</span>
-                </button>
-
-                <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
-                  <FaGraduationCap className="w-5 h-5" />
-                  <span>Go to Course</span>
-                </Link>
-              </nav>
-
-              <div className="pt-4 mt-4 border-t border-gray-700">
-                <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
-                  <LogOut className="w-5 h-5" />
-                  <span>Sign Out</span>
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <div className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-8">
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-gray-700/50 mb-6">
-                <div className="flex flex-col items-center mb-6">
-                  <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-blue-500 p-1">
+              ) : (
+                <div className="flex flex-col items-center p-6 mb-6">
+                  <div className="w-20 h-20 rounded-full overflow-hidden mb-4">
                     <img
                       src={userData.profileImage}
                       alt="Profile"
-                      className="w-full h-full object-cover rounded-full"
+                      className="w-full h-full object-cover"
                     />
-                  </div>
-                  <h2 className="text-xl font-bold">{userData.name}</h2>
-                  <div className="text-gray-400 text-sm">{userData.role}</div>
-                  <div className="text-gray-500 text-xs mt-1">Member since {userData.joined}</div>
+                </div>
+                  <h2 className="text-lg font-bold">{userData.name}</h2>
+                  <div className="text-sm text-gray-400">{userData.role}</div>
 
-                  {/* Wallet Connect Button */}
-                  <div className="mt-4 w-full">
+                  {/* Wallet Display/Connect for Mobile */}
+                  <div className="mt-3 w-full">
                     {!walletAddress ? (
                       <button
                         onClick={() => setShowWalletModal(true)}
@@ -557,27 +576,31 @@ function Profile() {
                     ) : (
                       <div className="w-full">
                         <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white mb-2">
-                          {activeWallet === 'metamask' && <FaEthereum className="text-orange-400" />}
-                          {activeWallet === 'rainbow' && <FaEthereum className="text-blue-400" />}
-                          {activeWallet === 'walletconnect' && <FaEthereum className="text-blue-500" />}
-                          {activeWallet === 'coinbase' && <FaEthereum className="text-blue-600" />}
-                          {!activeWallet && <FaEthereum className="text-gray-400" />}
+                          <FaEthereum className="text-blue-400" />
                           <span className="text-sm">{formatAddress(walletAddress)}</span>
-                        </div>
-                        <button
+                </div>
+                        {/* <button
                           onClick={disconnectWallet}
                           className="w-full py-1 px-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300 transition-colors"
                         >
                           Disconnect
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                        </button> */}
                 </div>
+                    )}
+              </div>
+                </div>
+              )}
 
-                <div className="space-y-2 pt-4 border-t border-gray-700">
+              {isLoading ? (
+                <div className="space-y-2 animate-pulse">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className="h-12 bg-gray-700 rounded w-full"></div>
+                  ))}
+                </div>
+              ) : (
+                <nav className="space-y-1">
                   <button
-                    onClick={() => setActiveTab('overview')}
+                    onClick={() => { setActiveTab('overview'); setShowMobileMenu(false); }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
                       }`}
                   >
@@ -586,7 +609,7 @@ function Profile() {
                   </button>
 
                   <button
-                    onClick={() => setActiveTab('certificates')}
+                    onClick={() => { setActiveTab('certificates'); setShowMobileMenu(false); }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
                       }`}
                   >
@@ -595,7 +618,7 @@ function Profile() {
                   </button>
 
                   <button
-                    onClick={() => setActiveTab('achievements')}
+                    onClick={() => { setActiveTab('achievements'); setShowMobileMenu(false); }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
                       }`}
                   >
@@ -604,7 +627,7 @@ function Profile() {
                   </button>
 
                   <button
-                    onClick={() => setActiveTab('settings')}
+                    onClick={() => { setActiveTab('settings'); setShowMobileMenu(false); }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
                       }`}
                   >
@@ -616,16 +639,126 @@ function Profile() {
                     <FaGraduationCap className="w-5 h-5" />
                     <span>Go to Course</span>
                   </Link>
-                </div>
+                </nav>
+              )}
 
-                <div className="pt-4 mt-4 border-t border-gray-700">
-                  <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
-                    <LogOut className="w-5 h-5" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
-              </div>
+              {/* <div className="pt-4 mt-4 border-t border-gray-700">
+                <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
+                  <LogOut className="w-5 h-5" />
+                  <span>Sign Out</span>
+                </button>
+              </div> */}
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <div className="hidden lg:block w-64 flex-shrink-0">
+            <div className="sticky top-8">
+              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-gray-700/50 mb-6">
+                {isLoading ? (
+                  <ProfileSkeleton />
+                ) : (
+                  <>
+                    <div className="flex flex-col items-center mb-6">
+                      <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-blue-500 p-1">
+                        <img
+                          src={userData.profileImage}
+                          alt="Profile"
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      </div>
+                      <h2 className="text-xl font-bold">{userData.name}</h2>
+                      <div className="text-gray-400 text-sm">{userData.role}</div>
+                      <div className="text-gray-500 text-xs mt-1">Member since {userData.joined}</div>
+
+                      {/* Wallet Connect Button */}
+                      <div className="mt-4 w-full">
+                        {!walletAddress ? (
+                          <button
+                            onClick={() => setShowWalletModal(true)}
+                            className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-medium transition-colors"
+                          >
+                            <Wallet size={18} />
+                            <span>Connect Wallet</span>
+                          </button>
+                        ) : (
+                          <div className="w-full">
+                            <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700/50 rounded-lg text-white mb-2">
+                              {activeWallet === 'metamask' && <FaEthereum className="text-orange-400" />}
+                              {activeWallet === 'rainbow' && <FaEthereum className="text-blue-400" />}
+                              {activeWallet === 'walletconnect' && <FaEthereum className="text-blue-500" />}
+                              {activeWallet === 'coinbase' && <FaEthereum className="text-blue-600" />}
+                              {!activeWallet && <FaEthereum className="text-gray-400" />}
+                              <span className="text-sm">{formatAddress(walletAddress)}</span>
+                    </div>
+                            {/* <button
+                              onClick={disconnectWallet}
+                              className="w-full py-1 px-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300 transition-colors"
+                            >
+                              Disconnect
+                            </button> */}
+                          </div>
+                        )}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2 pt-4 border-t border-gray-700">
+                      <button
+                        onClick={() => setActiveTab('overview')}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                          }`}
+                      >
+                        <User className="w-5 h-5" />
+                        <span>Overview</span>
+                      </button>
+
+                      <button
+                        onClick={() => setActiveTab('certificates')}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'certificates' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                          }`}
+                      >
+                        <FaCertificate className="w-5 h-5" />
+                        <span>Certificates</span>
+                      </button>
+
+                      <button
+                        onClick={() => setActiveTab('achievements')}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                          }`}
+                      >
+                        <Award className="w-5 h-5" />
+                        <span>Achievements</span>
+                      </button>
+
+                      <button
+                        onClick={() => setActiveTab('settings')}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-gray-700/70'
+                          }`}
+                      >
+                        <Settings className="w-5 h-5" />
+                        <span>Settings</span>
+                      </button>
+
+                      <Link to="/course/1" className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-gray-700/70">
+                        <FaGraduationCap className="w-5 h-5" />
+                        <span>Go to Course</span>
+                      </Link>
+                    </div>
+
+                    {/* <div className="pt-4 mt-4 border-t border-gray-700">
+                      <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
+                        <LogOut className="w-5 h-5" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div> */}
+                  </>
+                )}
+                  </div>
+                </div>
           </div>
 
           {/* Main Content */}
@@ -635,7 +768,7 @@ function Profile() {
               <div>
                 <h1 className="text-3xl font-bold mb-2">My Profile</h1>
                 <div className="text-gray-400">Welcome back, {userData.name}! Here's an overview of your learning journey.</div>
-              </div>
+          </div>
 
               <div className="flex items-center space-x-3">
                 {/* Mobile wallet connect button (only visible on small screens) */}
@@ -654,7 +787,7 @@ function Profile() {
                       <span className="text-sm">{formatAddress(walletAddress)}</span>
                     </div>
                   )}
-                </div>
+                      </div>
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
                   className="relative p-3 rounded-full bg-gray-800/70 backdrop-blur-sm text-white hover:bg-gray-700 transition-colors shadow-lg"
@@ -663,15 +796,21 @@ function Profile() {
                   {notifications.some(n => n.isNew) && (
                     <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
                   )}
-                </button>
-              </div>
-            </div>
+                    </button>
+                  </div>
+                </div>
 
             {/* Content Tabs */}
-            {activeTab === 'overview' && <Overview userData={userData} walletAddress={walletAddress} />}
-            {activeTab === 'certificates' && <Certificates certificates={certificates} walletAddress={walletAddress} />}
-            {activeTab === 'achievements' && <Achievements badges={badges} />}
-            {activeTab === 'settings' && <SettingsComponent userData={userData} walletAddress={walletAddress} />}
+            {isLoading ? (
+              <ContentSkeleton />
+            ) : (
+              <>
+                {activeTab === 'overview' && <Overview userData={userData} walletAddress={walletAddress} />}
+                {activeTab === 'certificates' && <Certificates certificates={certificates} walletAddress={walletAddress} />}
+                {activeTab === 'achievements' && <Achievements badges={badges} />}
+                {activeTab === 'settings' && <SettingsComponent userData={userData} walletAddress={walletAddress} />}
+              </>
+            )}
           </div>
         </div>
       </div>

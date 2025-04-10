@@ -8,8 +8,8 @@ import ipfsService from '../utils/ipfsStorage';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import Web3 from 'web3';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const CourseModal = ({ isOpen, setIsOpen, course, theme }) => {
   return (
@@ -429,13 +429,15 @@ const BuyCourseButton = ({ course }) => {
 };
 
 const Courses = () => {
+  const { address } = useAccount();
   const { theme } = useTheme();
   const { getClient } = useMentoraContract();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all'); // 'all' or 'active'
+  const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCourses();
@@ -511,6 +513,34 @@ const Courses = () => {
                          course.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
+
+  if (!address) {
+    return (
+      <div className={`min-h-screen ${theme.background} ${theme.text.primary} flex items-center justify-center`}>
+        <div className="max-w-md mx-auto text-center bg-white shadow-lg rounded-lg p-8 relative overflow-hidden">
+          {/* Decorative Background Elements */}
+          <div className="absolute top-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full -mt-24 -ml-24"></div>
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full -mb-32 -mr-32"></div>
+
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="mb-4">
+              <FaWallet className="text-6xl text-blue-500" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Connect Your Wallet</h2>
+            <p className="text-lg text-gray-600 mb-6">
+              To access the courses, please connect your wallet.
+            </p>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all shadow-lg"
+            >
+              Connect Wallet
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

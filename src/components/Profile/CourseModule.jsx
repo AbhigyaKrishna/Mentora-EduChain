@@ -236,9 +236,9 @@ const CourseModule = ({ topics = [], onUpdateProgress }) => {
             </div>
             
             <div className="space-y-3">
-              {topics.map((topic, index) => (
-                <div
-                  key={index}
+        {topics.map((topic, index) => (
+          <div
+            key={index}
                   onClick={() => handleTopicClick(topic)}
                   className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${
                     activeTopic?.id === topic.id 
@@ -256,7 +256,7 @@ const CourseModule = ({ topics = [], onUpdateProgress }) => {
                           ? 'bg-gray-700/30 text-gray-600'
                           : 'bg-blue-500/20 text-blue-400'
                     }`}>
-                      {topic.isLocked ? (
+              {topic.isLocked ? (
                         <FaLock className="w-4 h-4" />
                       ) : completedTopics.has(topic.id) ? (
                         <FaCheck className="w-4 h-4" />
@@ -316,7 +316,7 @@ const CourseModule = ({ topics = [], onUpdateProgress }) => {
                       <div className="text-sm text-gray-400">
                         Duration: {activeTopic.duration || '15:00'}
                       </div>
-                    </div>
+      </div>
 
                     <VideoPlayer 
                       videoUrl={activeTopic.videoUrl} 
