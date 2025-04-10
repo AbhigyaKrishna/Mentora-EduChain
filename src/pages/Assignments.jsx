@@ -4,11 +4,9 @@ import { motion } from 'framer-motion';
 import { FaPlus, FaSpinner, FaCheck, FaTasks, FaCode, FaChevronDown } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useContract } from '../hooks/useContract';
-import { useAccount } from 'wagmi';
 
 const Assignments = () => {
   const { theme } = useTheme();
-  const { address } = useAccount();
   const { getClient } = useContract('assignment');
   const navigate = useNavigate();
   const [assignments, setAssignments] = useState([]);
