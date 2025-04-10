@@ -7,9 +7,10 @@ import { useContract } from '../hooks/useContract';
 import ipfsService from '../utils/ipfsStorage';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import { useAccount, useBalance } from 'wagmi';
+import { useBalance } from 'wagmi';
 import Web3 from 'web3';
 import { toast } from 'react-hot-toast';
+import { useOCAuthState } from '../hooks/useOCAuthState';
 
 const CourseModal = ({ isOpen, setIsOpen, course, theme }) => {
   return (
@@ -276,7 +277,7 @@ const CourseCard = ({ course, theme }) => {
 };
 
 const BuyCourseButton = ({ course }) => {
-  const { address } = useAccount();
+  const { ethAddress: address } = useOCAuthState();
   const { data: balance } = useBalance({ address });
   const [purchasing, setPurchasing] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);

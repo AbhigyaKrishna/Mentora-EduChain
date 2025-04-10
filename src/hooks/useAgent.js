@@ -102,7 +102,6 @@ export const useChat = () => {
       });
 
       const data = await response.json();
-      console.log("Poll response:", data);
       
       if (!context && data.context) {
         setContext(data.context);
