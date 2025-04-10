@@ -210,13 +210,6 @@ const Careers = () => {
           transition={{ delay: 0.5 }}
           className="text-center mt-12"
         >
-          <h2 className="text-2xl font-bold mb-4">Join Our Team</h2>
-          <p className={`${theme.text.secondary} max-w-2xl mx-auto mb-6`}>
-            Join our team of blockchain experts and help shape the future of decentralized technology.
-          </p>
-          <button className={`${theme.primary} text-white px-8 py-3 rounded-full hover:opacity-90 transition-opacity`}>
-            Apply Now
-          </button>
         </motion.div>
       </div>
     </div>
