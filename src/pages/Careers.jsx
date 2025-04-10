@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaBriefcase, FaCode, FaChartLine, FaShieldAlt, FaServer, FaPencilAlt } from 'react-icons/fa';
+import { 
+  FaBriefcase, FaCode, FaChartLine, FaShieldAlt, FaServer, FaPencilAlt,
+  FaMicroscope, FaTasks, FaPalette, FaCogs, FaCoins, FaExchangeAlt
+} from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 
 const Careers = () => {
@@ -66,8 +69,7 @@ const Careers = () => {
         'Documentation experience'
       ],
       salary: '$70,000 - $100,000'
-    }
-    ,
+    },
     {
       title: 'Blockchain Research Scientist',
       icon: <FaMicroscope className="text-blue-500" />,
@@ -127,6 +129,30 @@ const Careers = () => {
         'Financial modeling'
       ],
       salary: '$115,000 - $175,000'
+    },
+    {
+      title: 'Smart Contract Auditor',
+      icon: <FaShieldAlt className="text-red-500" />,
+      description: 'Perform comprehensive security audits of smart contracts. Identify vulnerabilities and provide remediation guidance.',
+      requirements: [
+        'Smart contract expertise',
+        'Security background',
+        'Audit experience',
+        'Bug bounty participation'
+      ],
+      salary: '$140,000 - $200,000'
+    },
+    {
+      title: 'DeFi Protocol Engineer',
+      icon: <FaExchangeAlt className="text-green-500" />,
+      description: 'Design and implement decentralized finance protocols. Build lending, trading and yield farming systems.',
+      requirements: [
+        'DeFi protocol knowledge',
+        'Financial engineering',
+        'Solidity mastery',
+        'Testing frameworks'
+      ],
+      salary: '$120,000 - $180,000'
     }
   ];
 
@@ -186,7 +212,7 @@ const Careers = () => {
         >
           <h2 className="text-2xl font-bold mb-4">Join Our Team</h2>
           <p className={`${theme.text.secondary} max-w-2xl mx-auto mb-6`}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Join our team of blockchain experts and help shape the future of decentralized technology.
           </p>
           <button className={`${theme.primary} text-white px-8 py-3 rounded-full hover:opacity-90 transition-opacity`}>
             Apply Now
