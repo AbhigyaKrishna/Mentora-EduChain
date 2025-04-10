@@ -28,6 +28,7 @@ import Rewards from './pages/Rewards';
 import Certificates from './pages/Certificates';
 import CoursePage from './pages/CoursePage';
 import { CoinsProvider } from './context/CoinsContext';
+import Instructors from './pages/Instructors';
 
 // OCConnect configuration
 const ocConnectOpts = {
@@ -134,6 +135,7 @@ function App() {
                   <Route path="certificates" element={<Certificates />} />
                   <Route path="course/:courseId" element={<CoursePage />} />
                   <Route path="*" element={<NotFound />} />
+                  <Route path="instructors" element={<Instructors />} />
                   <Route
                     path="/redirect"
                     element={
