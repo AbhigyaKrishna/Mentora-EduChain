@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaCoins, FaUserCheck, FaCalendarAlt, FaGraduationCap, FaTasks, FaTrophy, 
   FaCode, FaFire, FaLock, FaUnlock, FaChartLine, FaMedal, FaCertificate, 
   FaFilter, FaSort, FaSearch } from 'react-icons/fa';
 import CoinsDisplay from '../components/CoinsDisplay';
+import { useContract } from '../hooks/useContract';
 
 const Rewards = () => {
   const [activeTab, setActiveTab] = useState('daily');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCompleted, setFilterCompleted] = useState('all');
   const [sortBy, setSortBy] = useState('default');
+  const [totalCoins, setTotalCoins] = useState(0);
+  const { getClient } = useContract('token');
 
   // Sample data for coin rewards
   const dailyRewards = [
@@ -170,7 +173,14 @@ const Rewards = () => {
   const allRewards = [...dailyRewards, ...achievementRewards, ...expertRewards];
 
   // Calculate total coins earned
-  const totalCoins = allRewards.reduce((total, reward) => reward.completed ? total + reward.coins : total, 0);
+  // const totalCoins = allRewards.reduce((total, reward) => reward.completed ? total + reward.coins : total, 0);
+  useEffect(() => {
+    const fetchTotalCoins = async () => {
+      const balance = await getClient().getBalance();
+      setTotalCoins(Number(balance));
+    };
+    fetchTotalCoins();
+  }, [getClient]);
 
   // Current active rewards based on tab
   const getActiveRewards = () => {

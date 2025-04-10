@@ -376,7 +376,7 @@ const Documentation = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <a
-              href="https://github.com/vaibhavkothari33/Mentora"
+              href="https://github.com/AbhigyaKrishna/Mentora-EduChain"
               target="_blank"
               rel="noopener noreferrer"
               className={`flex flex-col items-center p-6 rounded-lg ${darkMode ? 'bg-gray-800/70 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'} transition-colors text-center`}

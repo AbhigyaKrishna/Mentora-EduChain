@@ -50,7 +50,7 @@ class BaseContract {
    * @param {string} [options.from] - From address
    * @param {number|string} [options.gas] - Gas limit
    * @param {number|string} [options.gasPrice] - Gas price
-   * @param {number|string} [options.value] - ETH value to send
+   * @param {number|string} [options.value] - EDU value to send
    * @returns {Promise<object>} Transaction receipt
    */
   async _sendTransaction(tx, options = {}) {
@@ -58,11 +58,24 @@ class BaseContract {
       const from = options.from || this.defaultAccount;
       if (!from) throw new Error('No from address specified');
       
-      const gas = options.gas || await tx.estimateGas({ from }).catch(err => {
-        throw new Error(`Gas estimation failed: ${err.message}`);
-      });
+      let gas;
+      try {
+        gas = options.gas || await tx.estimateGas({ from });
+      } catch (gasError) {
+        console.warn('Gas estimation failed:', gasError.message);
+        // Fallback to a higher gas limit if estimation fails
+        gas = options.gas || 3000000; // Default higher gas limit
+      }
       
-      const gasPrice = options.gasPrice || await this.web3.eth.getGasPrice();
+      let gasPrice;
+      try {
+        gasPrice = options.gasPrice || await this.web3.eth.getGasPrice();
+      } catch (gasPriceError) {
+        console.warn('Gas price retrieval failed:', gasPriceError.message);
+        // Fallback to a reasonable gas price
+        gasPrice = options.gasPrice || '50000000000'; // 50 Gwei
+      }
+      
       const value = options.value || '0';
       
       const txParams = {
@@ -76,12 +89,21 @@ class BaseContract {
       
       if (this.account && from === this.account.address) {
         const signedTx = await this.web3.eth.accounts.signTransaction(txParams, this.account.privateKey);
-        return this.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+        return this.web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+          .on('error', (error) => {
+            throw new Error(`Transaction failed: ${error.message}`);
+          });
       }
       
-      return this.web3.eth.sendTransaction(txParams);
+      return this.web3.eth.sendTransaction(txParams)
+        .on('error', (error) => {
+          throw new Error(`Transaction failed: ${error.message}`);
+        });
     } catch (error) {
       console.error('Transaction error:', error);
+      if (error.message.includes('Internal JSON-RPC error')) {
+        throw new Error(`Transaction failed: The blockchain node returned an internal error. This could be due to network congestion, node issues, or contract execution failure. Please try again later or check your transaction parameters.`);
+      }
       throw new Error(`Transaction failed: ${error.message}`);
     }
   }
