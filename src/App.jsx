@@ -35,7 +35,8 @@ import Documentation from './pages/Documentation';
 import Blog from './pages/Blog';
 import Support from './pages/Support';
 import Community from './pages/Community';
-
+import Pricing from './pages/Pricing';
+import Enterprise from './pages/Enterprise';
 // OCConnect configuration
 const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',
@@ -146,6 +147,8 @@ function App() {
                   <Route path="blog" element={<Blog />} />
                   <Route path="support" element={<Support />} />
                   <Route path="community" element={<Community />} />
+                  <Route path="pricing" element={<Pricing />} />
+                  <Route path="enterprise" element={<Enterprise />} />
                   <Route path="*" element={<NotFound />} />
                   <Route
                     path="/redirect"
