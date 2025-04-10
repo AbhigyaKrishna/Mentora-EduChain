@@ -43,6 +43,8 @@ class CourseManager extends BaseContract {
     moduleCount,
     options = {}
   ) {
+    const priceWei = this.web3.utils.toWei(price.toString(), 'ether');
+
     const tx = this.contract.methods.createCourse(
       title,
       description,
@@ -51,7 +53,7 @@ class CourseManager extends BaseContract {
       contentIpfsHash,
       difficulty,
       duration,
-      price,
+      priceWei,
       moduleCount
     );
     return this._sendTransaction(tx, options);
@@ -81,13 +83,15 @@ class CourseManager extends BaseContract {
     moduleCount,
     options = {}
   ) {
+    const priceWei = this.web3.utils.toWei(price.toString(), 'ether');
+
     const tx = this.contract.methods.updateCourse(
       courseId,
       title,
       description,
       thumbnailIpfsHash,
       contentIpfsHash,
-      price,
+      priceWei,
       isActive,
       moduleCount
     );
@@ -146,7 +150,16 @@ class CourseManager extends BaseContract {
    * @returns {Promise<object>} Course information
    */
   async getCourseInfo(courseId) {
-    return this.call('getCourseInfo', [courseId]);
+    const courseInfo = this.call('getCourseInfo', [courseId]);
+    return {
+      id: parseInt(courseInfo.id),
+      title: courseInfo.title,
+      description: courseInfo.description,
+      category: courseInfo.category,
+      thumbnailIpfsHash: courseInfo.thumbnailIpfsHash,
+      difficulty: parseInt(courseInfo.difficulty),
+      duration: parseInt(courseInfo.duration)
+    };
   }
 
   /**
@@ -164,7 +177,15 @@ class CourseManager extends BaseContract {
    * @returns {Promise<object>} Complete course object
    */
   async getCourse(courseId) {
-    return this.call('courses', [courseId]);
+    const stats = this.call('courses', [courseId]);
+    return {
+      creator: stats.creator,
+      isActive: stats.isActive,
+      price: this.web3.utils.fromWei(stats.price, 'ether'),
+      totalSales: parseInt(stats.totalSales),
+      moduleCount: parseInt(stats.moduleCount),
+      enrolledUsers: parseInt(stats.enrolledUsers)
+    };
   }
 
   /**

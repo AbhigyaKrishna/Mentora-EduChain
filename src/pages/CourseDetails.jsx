@@ -101,7 +101,7 @@ const CourseDetails = () => {
       }
 
       const confirmed = window.confirm(
-        `Are you sure you want to purchase "${course.title}" for ${course.price} ETH?`
+        `Are you sure you want to purchase "${course.title}" for ${course.price} EDU?`
       );
 
       if (!confirmed) {
@@ -177,7 +177,7 @@ const CourseDetails = () => {
       ) : (
         <>
           <FaEthereum className="text-xl" />
-          <span>Enroll Now • {parseFloat(course.price).toFixed(4)} ETH</span>
+          <span>Enroll Now • {parseFloat(course.price).toFixed(4)} EDU</span>
         </>
       )}
     </button>

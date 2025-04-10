@@ -55,6 +55,10 @@ class MentoraToken extends BaseContract {
     return this.call('balanceOf', [address]);
   }
 
+  async getBalance() {
+    return await this.balanceOf(this.defaultAccount);
+  }
+
   /**
    * Get token allowance
    * @param {string} owner - Token owner address
