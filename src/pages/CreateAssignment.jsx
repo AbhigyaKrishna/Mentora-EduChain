@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { useAssignmentManager } from '../hooks/useAssignmentManager';
+import { useContract } from '../hooks/useContract';
 import { useOCAuthState } from '../hooks/useOCAuthState';
 import { useWalletConnection } from '../hooks/useWalletConnection';
 import { FaPlus, FaSpinner, FaTrash, FaCheckCircle } from 'react-icons/fa';
@@ -11,7 +11,7 @@ import ipfsService from '../utils/ipfsStorage';
 const CreateAssignment = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const { getClient, error: contractError } = useAssignmentManager();
+  const { getClient, error: contractError } = useContract('assignment');
   const { ethAddress } = useOCAuthState();
   const { isConnected, error: walletError, isLoading: isWalletLoading, connect } = useWalletConnection(ethAddress);
   const [isSubmitting, setIsSubmitting] = useState(false);

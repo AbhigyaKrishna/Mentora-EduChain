@@ -8,7 +8,7 @@ import { FaSpinner, FaArrowDown, FaPaperPlane, FaGithub, FaCheck, FaTasks, FaCod
 // import { IoInformationCircle } from 'react-icons/io5';
 import { MdError, MdOutlineSmartToy } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
-import { useAssignmentManager } from '../hooks/useAssignmentManager';
+import { useContract } from '../hooks/useContract';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -430,7 +430,7 @@ const convertToTitleCase = (str) => {
 const AIAssignment = () => {
   const { id } = useParams();
   const { darkMode } = useTheme();
-  const { getClient } = useAssignmentManager();
+  const { getClient } = useContract('assignment');
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   // const [solution, setSolution] = useState('');
   const [submitting, setSubmitting] = useState(false);

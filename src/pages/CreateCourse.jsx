@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { FaSpinner, FaUpload, FaPlus, FaTrash, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import ipfsService from '../utils/ipfsStorage';
-import { useMentoraContract } from '../hooks/useMentoraContract';
+import { useContract } from '../hooks/useContract';
 
 const CreateCourse = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const { getClient } = useMentoraContract();
+  const { getClient } = useContract('course');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);

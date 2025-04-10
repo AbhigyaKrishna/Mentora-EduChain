@@ -20,50 +20,34 @@ export const useContract = (contract = 'both') => {
   // Initialize the clients
   const initialize = useCallback((provider = window.ethereum, account = ethAddress ? ethAddress : window.ethereum?.selectedAddress) => {
     try {
-      const clients = {};
+      if (isInitialized) return;
 
-      // Initialize CourseManager if needed
-      if ((contract === 'course' || contract === 'both') && !courseManager) {
-        const newCourseManager = new CourseManager(provider, import.meta.env.VITE_COURSE_MANAGER_ADDRESS);
-        newCourseManager.setDefaultAccount(account);
+      // Check and initialize CourseManager if not already initialized
+      if (!courseManager) {
+        const newCourseManager = new CourseManager(provider);
         setCourseManager(newCourseManager);
-        clients.course = newCourseManager;
-      } else if (courseManager) {
-        clients.course = courseManager;
       }
 
-      // Initialize AssignmentManager if needed
-      if ((contract === 'assignment' || contract === 'both') && !assignmentManager) {
-        const newAssignmentManager = new AssignmentManager(provider, import.meta.env.VITE_ASSIGNMENT_MANAGER_ADDRESS);
-        newAssignmentManager.setDefaultAccount(account);
+      // Check and initialize AssignmentManager if not already initialized
+      if (!assignmentManager) {
+        const newAssignmentManager = new AssignmentManager(provider);
         setAssignmentManager(newAssignmentManager);
-        clients.assignment = newAssignmentManager;
-      } else if (assignmentManager) {
-        clients.assignment = assignmentManager;
       }
 
-      // Initialize MentoraToken if needed
-      if ((contract === 'mentora' || contract === 'both') && !mentoraToken) {
-        const newMentoraToken = new MentoraToken(provider, import.meta.env.VITE_MENTORA_TOKEN_ADDRESS);
-        newMentoraToken.setDefaultAccount(account);
+      // Check and initialize MentoraToken if not already initialized
+      if (!mentoraToken) {
+        const newMentoraToken = new MentoraToken(provider);
         setMentoraToken(newMentoraToken);
-        clients.mentora = newMentoraToken;
-      } else if (mentoraToken) {
-        clients.mentora = mentoraToken;
       }
 
-      setIsInitialized(true);
-      
-      // Return the appropriate client(s) based on type
-      if (contract === 'course') return clients.course;
-      if (contract === 'assignment') return clients.assignment;
-      if (contract === 'mentora') return clients.mentora;
-      return clients;
+      if (mentoraToken && assignmentManager && courseManager) {
+        setIsInitialized(true);
+      }
     } catch (err) {
       setError(err.message);
       throw err;
     }
-  }, [courseManager, assignmentManager, mentoraToken, ethAddress, contract]);
+  }, [ethAddress, courseManager, assignmentManager, mentoraToken]);
 
   // Get the client instance(s), initializing if needed
   const getClient = useCallback(() => {
