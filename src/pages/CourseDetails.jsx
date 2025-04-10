@@ -6,8 +6,8 @@ import { useTheme } from '../context/ThemeContext';
 import ipfsService from '../utils/ipfsStorage';
 import { toast } from 'react-hot-toast';
 import Web3 from 'web3';
-import { useAccount, useBalance } from 'wagmi';
 import { useContract } from '../hooks/useContract';
+import { useOCAuthState } from '../hooks/useOCAuthState';
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -17,14 +17,33 @@ const CourseDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const { address } = useAccount();
-  const { data: balance } = useBalance({ address });
+  const { ethAddress: address } = useOCAuthState();
+  const [balance, setBalance] = useState(null);
   const [purchasing, setPurchasing] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
 
   useEffect(() => {
     fetchCourseDetails();
   }, [id]);
+
+  useEffect(() => {
+    if (address) {
+      fetchBalance();
+    }
+  }, [address]);
+
+  const fetchBalance = async () => {
+    try {
+      const web3 = new Web3(window.ethereum);
+      const balanceWei = await web3.eth.getBalance(address);
+      setBalance({
+        value: balanceWei,
+        formatted: web3.utils.fromWei(balanceWei, 'ether')
+      });
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    }
+  };
 
   const fetchCourseDetails = async () => {
     try {
@@ -90,12 +109,12 @@ const CourseDetails = () => {
       toast.error('You are already enrolled in this course');
       return;
     }
-
     try {
       setPurchasing(true);
       const priceInWei = Web3.utils.toWei(course.price.toString(), 'ether');
       
-      if (balance?.value.lt(priceInWei)) {
+      if (!balance || balance.value < priceInWei) {
+        console.log(balance?.value, priceInWei);
         toast.error('Insufficient balance to purchase this course');
         return;
       }
@@ -112,8 +131,7 @@ const CourseDetails = () => {
       const loadingToast = toast.loading('Processing your purchase...');
 
       try {
-        const tx = await getClient().purchaseCourse(course.id, course.price);
-        await tx.wait();
+        const tx = await getClient().purchaseCourse(course.id);
 
         toast.success('Successfully enrolled in the course!', {
           id: loadingToast,
