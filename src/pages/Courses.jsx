@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaStar, FaUsers, FaClock, FaFilter, FaBook, FaChalkboardTeacher, FaGraduationCap, FaCode, FaTimes, FaEthereum, FaCertificate, FaWallet, FaCheck, FaSpinner } from 'react-icons/fa';
+import { FaStar, FaUsers, FaClock, FaFilter, FaBook, FaChalkboardTeacher, FaGraduationCap, FaCode, FaTimes, FaEthereum, FaCertificate, FaWallet, FaCheck, FaSpinner, FaPlus } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useContract } from '../hooks/useContract';
 import ipfsService from '../utils/ipfsStorage';
@@ -571,29 +571,39 @@ const Courses = () => {
           transition={{ delay: 0.3 }}
           className="bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-2xl p-8 mb-12 backdrop-blur-sm"
         >
-          <div className="flex flex-col md:flex-row gap-6 items-center">
-            <div className="relative flex-1 w-full">
-              <input
-                type="text"
-                placeholder="Search for courses..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full px-6 text-white py-4 rounded-xl border-2 bg-gray-800 border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg placeholder-gray-400`}
-              />
-              <FaFilter className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
+            <div className="flex flex-col md:flex-row gap-6 items-center flex-1">
+              <div className="relative flex-1 w-full">
+                <input
+                  type="text"
+                  placeholder="Search for courses..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`w-full px-6 text-white py-4 rounded-xl border-2 bg-gray-800 border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg placeholder-gray-400`}
+                />
+                <FaFilter className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
+              
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className={`px-6 py-4 text-white bg-gray-800 rounded-xl border-2 border-gray-700 min-w-[200px] focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg`}
+              >
+                <option value="all" className="bg-gray-800 text-white">All Courses</option>
+                <option value="active" className="bg-gray-800 text-white">Active Courses</option>
+                <option value="beginner" className="bg-gray-800 text-white">Beginner</option>
+                <option value="intermediate" className="bg-gray-800 text-white">Intermediate</option>
+                <option value="advanced" className="bg-gray-800 text-white">Advanced</option>
+              </select>
             </div>
             
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className={`px-6 py-4 text-white bg-gray-800 rounded-xl border-2 border-gray-700 min-w-[200px] focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg`}
+            <Link
+              to="/create-course"
+              className="px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center gap-2 whitespace-nowrap"
             >
-              <option value="all" className="bg-gray-800 text-white">All Courses</option>
-              <option value="active" className="bg-gray-800 text-white">Active Courses</option>
-              <option value="beginner" className="bg-gray-800 text-white">Beginner</option>
-              <option value="intermediate" className="bg-gray-800 text-white">Intermediate</option>
-              <option value="advanced" className="bg-gray-800 text-white">Advanced</option>
-            </select>
+              <FaPlus />
+              <span>Create Course</span>
+            </Link>
           </div>
         </motion.div>
 
