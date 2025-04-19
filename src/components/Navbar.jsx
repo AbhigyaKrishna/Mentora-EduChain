@@ -61,9 +61,9 @@ const Navbar = () => {
   // Public links for non-authenticated users
   const publicLinks = [
     { path: '/', label: 'Home' },
-    { path: '/documentation', label: 'Documentation' }, 
+    { path: '/docs', label: 'Documentation' }, 
     { path: '/about', label: 'About' },
-    { path: '/faqs', label: 'FAQs' },
+    { path: '/faq', label: 'FAQs' },
     { path: '/pricing', label: 'Pricing' },
     // { path: '/privacy', label: 'Privacy' },
   ];

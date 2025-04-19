@@ -43,6 +43,7 @@ import BecomeInstructor from './pages/BecomeInstructor';
 import Terms from './pages/Terms';
 import CookiePolicy from './pages/CookiePolicy';
 import Accessibility from './pages/Accessibility';
+import ScrollToTop from './components/ScrolltoTop';
 // OCConnect configuration
 const ocConnectOpts = {
   clientId: import.meta.env.VITE_OC_CLIENT_ID || 'sandbox',
@@ -175,6 +176,7 @@ function App() {
                   />
                 </Route>
               </Routes>
+              <ScrollToTop />
             </Router>
           </ThemeProvider>
           </CoinsProvider>
