@@ -9,6 +9,7 @@ import { FaSpinner, FaArrowDown, FaPaperPlane, FaGithub, FaCheck, FaTasks, FaCod
 import { MdError, MdOutlineSmartToy } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
 import { useContract } from '../hooks/useContract';
+import ipfsService from '../utils/ipfsStorage';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -498,7 +499,7 @@ const AIAssignment = () => {
         // Fetch metaPrompt from IPFS
         let metaPrompt = '';
         if (assignment.metaPromptIpfsHash) {
-          const response = await fetch(`https://ipfs.io/ipfs/${assignment.metaPromptIpfsHash}`);
+          const response = await fetch(ipfsService.getIPFSUrl(assignment.metaPromptIpfsHash));
           const data = await response.json();
           metaPrompt = data.prompt;
         }

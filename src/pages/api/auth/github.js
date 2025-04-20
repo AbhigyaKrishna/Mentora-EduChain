@@ -1,5 +1,3 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-
 const GITHUB_CLIENT_ID = import.meta.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = import.meta.env.GITHUB_CLIENT_SECRET;
 
@@ -56,4 +54,4 @@ export default async function handler(req, res) {
     console.error('GitHub API error:', error);
     return res.status(500).json({ message: 'Failed to authenticate with GitHub' });
   }
-} 
+}
